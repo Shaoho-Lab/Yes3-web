@@ -1,5 +1,16 @@
 {
   "name": "lyon-server",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "start": "yarn build && node -r dotenv/config dist"
+  },
+  "dependencies": {
+    "firebase": "^9.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.16",
+    "rimraf": "^3.0.2"
+  }
 }
