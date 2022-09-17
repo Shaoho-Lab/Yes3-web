@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { ConnectKitButton } from 'connectkit'
 import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useAccount } from 'wagmi'
+import { ethers } from 'ethers'
 import styles from './index.module.scss'
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLDivElement> {}

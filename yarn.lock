@@ -3090,7 +3090,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.0.19":
+"@types/react@*", "@types/react@^18.0.19", "@types/react@^18.0.5":
   version "18.0.20"
   resolved "https://registry.npmjs.org/@types/react/-/react-18.0.20.tgz#e4c36be3a55eb5b456ecf501bd4a00fd4fd0c9ab"
   integrity sha512-MWul1teSPxujEHVwZl4a5HxQ9vVNsjTchVA+xRqv/VYGCuKGAU6UhfrTdF5aBefwD1BHUD8i/zq+O/vyCm/FrA==
@@ -3902,6 +3902,11 @@ async-mutex@^0.2.6:
   integrity sha512-Hs4R+4SPgamu6rSGW8C7cV9gaWUKEHykfzCCvIRuaVv636Ju10ZdeUbvb4TBEW0INuq2DHZqXbK4Nd3yG4RaRw==
   dependencies:
     tslib "^2.0.0"
+
+async-ref@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.npmmirror.com/async-ref/-/async-ref-0.1.6.tgz#babc3b57e87ccf93be11635c9a64169f50a5ebe9"
+  integrity sha512-gIvfC7ahv452pM+nwnxZJd/vhUh8UFMrd1DCvIvWjoy9WrRmYroXTTDxwg91oiD+4CqQKrg+11uCxZrzat4UvQ==
 
 async@^3.2.3:
   version "3.2.4"
@@ -6044,6 +6049,42 @@ ethers@^5.7.0:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
+ethers@^5.7.1:
+  version "5.7.1"
+  resolved "https://registry.npmmirror.com/ethers/-/ethers-5.7.1.tgz#48c83a44900b5f006eb2f65d3ba6277047fd4f33"
+  integrity sha512-5krze4dRLITX7FpU8J4WscXqADiKmyeNlylmmDLbS95DaZpBhDe2YSwRQwKXWNyXcox7a3gBgm/MkGXV1O1S/Q==
+  dependencies:
+    "@ethersproject/abi" "5.7.0"
+    "@ethersproject/abstract-provider" "5.7.0"
+    "@ethersproject/abstract-signer" "5.7.0"
+    "@ethersproject/address" "5.7.0"
+    "@ethersproject/base64" "5.7.0"
+    "@ethersproject/basex" "5.7.0"
+    "@ethersproject/bignumber" "5.7.0"
+    "@ethersproject/bytes" "5.7.0"
+    "@ethersproject/constants" "5.7.0"
+    "@ethersproject/contracts" "5.7.0"
+    "@ethersproject/hash" "5.7.0"
+    "@ethersproject/hdnode" "5.7.0"
+    "@ethersproject/json-wallets" "5.7.0"
+    "@ethersproject/keccak256" "5.7.0"
+    "@ethersproject/logger" "5.7.0"
+    "@ethersproject/networks" "5.7.1"
+    "@ethersproject/pbkdf2" "5.7.0"
+    "@ethersproject/properties" "5.7.0"
+    "@ethersproject/providers" "5.7.1"
+    "@ethersproject/random" "5.7.0"
+    "@ethersproject/rlp" "5.7.0"
+    "@ethersproject/sha2" "5.7.0"
+    "@ethersproject/signing-key" "5.7.0"
+    "@ethersproject/solidity" "5.7.0"
+    "@ethersproject/strings" "5.7.0"
+    "@ethersproject/transactions" "5.7.0"
+    "@ethersproject/units" "5.7.0"
+    "@ethersproject/wallet" "5.7.0"
+    "@ethersproject/web" "5.7.1"
+    "@ethersproject/wordlists" "5.7.0"
+
 ethjs-util@0.1.6, ethjs-util@^0.1.3:
   version "0.1.6"
   resolved "https://registry.npmjs.org/ethjs-util/-/ethjs-util-0.1.6.tgz#f308b62f185f9fe6237132fb2a9818866a5cd536"
@@ -6325,6 +6366,14 @@ firebase@^9.10.0:
     "@firebase/storage" "0.9.9"
     "@firebase/storage-compat" "0.1.17"
     "@firebase/util" "1.6.3"
+
+flag@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmmirror.com/flag/-/flag-5.0.1.tgz#31214fcbe275ea38f088ac6bf52d08f50616bfcb"
+  integrity sha512-4P/rvPGKcFBneboyYHMOKbKaJL5ZhNjScbY7bGToas7FgBvrTWbh76yxRaoSoFe3HSjWc6IJ0EajUwSadcP6Lg==
+  dependencies:
+    "@types/react" "^18.0.5"
+    async-ref "^0.1.6"
 
 flat-cache@^3.0.4:
   version "3.0.4"
