@@ -1,10 +1,13 @@
 .navbar {
-  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
+  height: 70px;
 
   .logo {
     font-size: 24px;

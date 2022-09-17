@@ -1,0 +1,19 @@
+.searchBar {
+  display: block;
+  appearance: none;
+
+  padding-left: 20px;
+  padding-right: 20px;
+
+  height: 60px;
+
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 0 30px #00000010;
+
+  font-size: 18px;
+
+  &:focus {
+    outline: none;
+  }
+}

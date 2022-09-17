@@ -1,0 +1,61 @@
+@import 'styles/mixins.scss';
+
+.questionCard {
+  position: relative;
+
+  .firstRow {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    .content {
+      flex: 1;
+      font-size: 20px;
+    }
+
+    .jazzicon {
+      display: block;
+
+      width: 30px;
+      height: 30px;
+
+      border-radius: 100%;
+    }
+  }
+
+  .secondRow {
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .stats {
+      flex: 1;
+      font-size: 16px;
+      color: #00000090;
+    }
+
+    .button {
+      user-select: none;
+
+      width: 160px;
+      height: 40px;
+
+      background-color: #5856d6;
+      color: #ffffff;
+
+      font-size: 18px;
+      font-weight: bold;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 12px;
+
+      @include buttonEffects;
+    }
+  }
+}

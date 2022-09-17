@@ -1,12 +1,8 @@
-import Jazzicon from '@raugfer/jazzicon'
 import classNames from 'classnames'
 import { ConnectKitButton } from 'connectkit'
+import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useAccount } from 'wagmi'
 import styles from './index.module.scss'
-
-const buildJazziconDataUrl = (address: string) => {
-  return 'data:image/svg+xml;base64,' + window.btoa(Jazzicon(address))
-}
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLDivElement> {}
 

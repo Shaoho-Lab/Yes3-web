@@ -1,6 +1,8 @@
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import AppPage from 'pages/app'
 import LandingPage from 'pages/landing'
+import TemplateCreatePage from 'pages/template-create'
+import TemplateViewPage from 'pages/template-view'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -16,6 +18,8 @@ const root = ReactDOM.createRoot(container)
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/app', element: <AppPage /> },
+  { path: '/templates/create', element: <TemplateCreatePage /> },
+  { path: '/templates/:templateId', element: <TemplateViewPage /> },
 ])
 
 root.render(
