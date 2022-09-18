@@ -2,6 +2,7 @@ import Navbar from 'components/navbar'
 import QuestionCard from 'components/question-card'
 import SearchBar from 'components/search-bar'
 import { useNavigate } from 'react-router-dom'
+import { ethers } from 'ethers'
 import styles from './index.module.scss'
 
 const AppPage = () => {

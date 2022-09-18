@@ -8,5 +8,9 @@
     "frontend:start": "yarn workspace lyon-frontend start",
     "server:build": "yarn workspace lyon-server build",
     "server:start": "yarn workspace lyon-server start"
+  },
+  "dependencies": {
+    "ethers": "^5.7.1",
+    "flag": "^5.0.1"
   }
 }
