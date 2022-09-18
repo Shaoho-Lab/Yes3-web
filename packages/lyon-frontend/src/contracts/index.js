@@ -1,4 +1,4 @@
-import {providerURL, privateKey, address, abi} from './constants'
+import { providerURL, privateKey, address, abi } from './constants'
 
 const ethers = require('ethers')
 
@@ -69,8 +69,22 @@ function mint(templateId, question, context, to) {
   return myContract_write._mint(templateId, question, context, to)
 }
 
-function replyPrompt(promptId, replierAddr, replierName, replyDetail, comment, signature) {
-  return myContract_write._replyPrompt(promptId, replierAddr, replierName, replyDetail, comment, signature)
+function replyPrompt(
+  promptId,
+  replierAddr,
+  replierName,
+  replyDetail,
+  comment,
+  signature,
+) {
+  return myContract_write._replyPrompt(
+    promptId,
+    replierAddr,
+    replierName,
+    replyDetail,
+    comment,
+    signature,
+  )
 }
 
 function burnReplies(promptId, replier) {
