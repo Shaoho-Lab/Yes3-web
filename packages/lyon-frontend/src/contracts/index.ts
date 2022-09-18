@@ -1,5 +1,6 @@
 import { providerURL, privateKey, address, abi } from './constants'
 import ethers from 'ethers'
+import { TupleType } from 'typescript'
 
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
@@ -36,45 +37,45 @@ function balanceOf(addr: string) {
   return myContract_read.balanceOf(addr)
 }
 
-function ownerOf(promptId) {
+function ownerOf(promptId: TupleType) {
   return myContract_read.ownerOf(promptId)
 }
 
-function tokenURI(promptId) {
+function tokenURI(promptId: TupleType) {
   return myContract_read.tokenURI(promptId)
 }
 
-function totalSupply(templateId) {
+function totalSupply(templateId: TupleType) {
   return myContract_read.totalSupply(templateId)
 }
 
-function supportsInterface(interfaceId) {
+function supportsInterface(interfaceId: bigint) {
   return myContract_read.supportsInterface(interfaceId)
 }
 
-function queryAllPromptByAddr(addr) {
+function queryAllPromptByAddr(addr: string) {
   return myContract_read.queryAllPromptByAddr(addr)
 }
 
-function queryAllRepliesByAddr(addr) {
+function queryAllRepliesByAddr(addr: string) {
   return myContract_read.queryAllRepliesByAddr(addr)
 }
 
-function queryAllRepliesByPrompt(promptId) {
+function queryAllRepliesByPrompt(promptId: TupleType) {
   return myContract_read.queryAllRepliesByPrompt(promptId)
 }
 
-function mint(templateId, question, context, to) {
+function mint(templateId: number, question: string, context: string, to: string) {
   return myContract_write._mint(templateId, question, context, to)
 }
 
 function replyPrompt(
-  promptId,
-  replierAddr,
-  replierName,
-  replyDetail,
-  comment,
-  signature,
+  promptId: TupleType,
+  replierAddr: string,
+  replierName: string,
+  replyDetail: string,
+  comment: string,
+  signature: number,
 ) {
   return myContract_write._replyPrompt(
     promptId,
@@ -86,10 +87,10 @@ function replyPrompt(
   )
 }
 
-function burnReplies(promptId, replier) {
+function burnReplies(promptId: TupleType, replier: string) {
   return myContract_write._burnReplies(promptId, replier)
 }
 
-function burnPrompt(promptId) {
+function burnPrompt(promptId: TupleType) {
   return myContract_write._burnPrompt(promptId)
 }
