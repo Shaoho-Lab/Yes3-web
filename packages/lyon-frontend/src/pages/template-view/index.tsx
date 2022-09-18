@@ -6,9 +6,6 @@ import TemplateTree from 'components/template-tree'
 const TemplateViewPage = () => {
   return (
     <CommonLayout className={styles.page}>
-      <div className={styles.heading}>
-        Am I a good teammate in ETH Global Hackathon?
-      </div>
       <div className={styles.content}>
         <h1>Am I a good teammate in ETH Global Hackathon?</h1>
         <div className={styles.options}>
@@ -27,11 +24,6 @@ const TemplateViewPage = () => {
             <TemplateTree />
           </div>
         </div>
-        <div className={styles.confirm}>Ask the question</div>
-      </div>
-      <div className={styles.charts}>
-        <div className={styles.stats}></div>
-        <div className={styles.graph}></div>
       </div>
     </CommonLayout>
   )
