@@ -1,12 +1,11 @@
 import { providerURL, privateKey, address, abi } from './constants'
-
-const ethers = require('ethers')
+import ethers from 'ethers'
 
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
-var signer = new ethers.Wallet(privateKey, provider)
-myContract_write = new ethers.Contract(address, abi, signer) // Write only
-myContract_read = new ethers.Contract(address, abi, provider) // Read only
+const signer = new ethers.Wallet(privateKey, provider)
+const myContract_write = new ethers.Contract(address, abi, signer) // Write only
+const myContract_read = new ethers.Contract(address, abi, provider) // Read only
 
 // myContract_write
 //   ._mint(
@@ -33,7 +32,7 @@ function symbol() {
   return myContract_read.symbol()
 }
 
-function balanceOf(addr) {
+function balanceOf(addr: string) {
   return myContract_read.balanceOf(addr)
 }
 
