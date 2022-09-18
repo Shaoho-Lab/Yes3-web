@@ -1,0 +1,43 @@
+@import 'styles/mixins.scss';
+
+.page {
+  .heading {
+    font-size: 32px;
+    font-weight: bold;
+
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+
+  .info {
+    margin-bottom: 60px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    .jazzicon {
+      display: block;
+
+      width: 180px;
+      height: 180px;
+
+      border-radius: 100%;
+    }
+
+    .identity {
+      margin-left: 50px;
+      margin-top: 10px;
+
+      .name {
+        font-size: 30px;
+      }
+
+      .address {
+        font-size: 18px;
+
+        margin-top: 10px;
+      }
+    }
+  }
+}

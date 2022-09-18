@@ -14,7 +14,7 @@ const AppPage = () => {
         <div className={styles.searchRow}>
           <SearchBar
             className={styles.searchBar}
-            placeholder="Search questions"
+            placeholder="Search question templates or create new one"
           />
           <div
             className={styles.createButton}

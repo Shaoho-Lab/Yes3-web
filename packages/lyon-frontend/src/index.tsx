@@ -1,8 +1,10 @@
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import AppPage from 'pages/app'
 import LandingPage from 'pages/landing'
+import PromptViewPage from 'pages/prompt-view'
 import TemplateCreatePage from 'pages/template-create'
 import TemplateViewPage from 'pages/template-view'
+import UserProfilePage from 'pages/user-profile'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
   { path: '/app', element: <AppPage /> },
   { path: '/templates/create', element: <TemplateCreatePage /> },
   { path: '/templates/:templateId', element: <TemplateViewPage /> },
+  { path: '/prompts/:promptId', element: <PromptViewPage /> },
+  { path: '/user/profile', element: <UserProfilePage /> },
 ])
 
 root.render(

@@ -30,12 +30,14 @@ const QuestionCard = ({
         />
       </div>
       <div className={styles.secondRow}>
-        <div className={styles.stats}>{numAnswers} answers</div>
+        <div className={styles.stats}>
+          {numAnswers} people used this template
+        </div>
         <div
           className={styles.button}
           onClick={() => navigate('/templates/0x123456781234567812345678')}
         >
-          Mint question
+          Ask this question
         </div>
       </div>
     </Card>
