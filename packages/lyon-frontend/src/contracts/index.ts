@@ -1,6 +1,20 @@
 import { providerURL, privateKey, address, abi } from './constants'
 import ethers from 'ethers'
-import { TupleType } from 'typescript'
+import {
+  auth,
+  arrayUnion,
+  firestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  addDoc,
+  firestoreQuery,
+  orderBy,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from "../firebase";
 
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
@@ -26,71 +40,132 @@ const myContract_read = new ethers.Contract(address, abi, provider) // Read only
 //   })
 
 function name() {
-  return myContract_read.name()
+  myContract_read.name().then((result: string) => {
+    return result
+  })
 }
 
 function symbol() {
-  return myContract_read.symbol()
+  myContract_read.symbol().then((result: string) => {
+    return result
+  })
 }
 
 function balanceOf(addr: string) {
-  return myContract_read.balanceOf(addr)
+  myContract_read.balanceOf(addr).then((result: number) => {
+    return result
+  })
 }
 
-function ownerOf(promptId: TupleType) {
-  return myContract_read.ownerOf(promptId)
+function ownerOf(promptId: [number, number]) {
+  myContract_read.ownerOf(promptId).then((result: string) => {
+    return result
+  })
 }
 
-function tokenURI(promptId: TupleType) {
-  return myContract_read.tokenURI(promptId)
+function tokenURI(promptId: [number, number]) {
+  myContract_read.tokenURI(promptId).then((result: string) => {
+    return result
+  })
 }
 
-function totalSupply(templateId: TupleType) {
-  return myContract_read.totalSupply(templateId)
+function totalSupply(templateId: [number, number]) {
+  myContract_read.totalSupply(templateId).then((result: number) => {
+    return result
+  })
 }
 
 function supportsInterface(interfaceId: bigint) {
-  return myContract_read.supportsInterface(interfaceId)
+  myContract_read.supportsInterface(interfaceId).then((result: boolean) => {
+    return result
+  })
 }
 
 function queryAllPromptByAddr(addr: string) {
-  return myContract_read.queryAllPromptByAddr(addr)
+  myContract_read.queryAllPromptByAddr(addr).then((result: [number, number][]) => {
+    return result
+  })
 }
 
 function queryAllRepliesByAddr(addr: string) {
-  return myContract_read.queryAllRepliesByAddr(addr)
+  myContract_read.queryAllRepliesByAddr(addr).then((result: [number, number][]) => {
+    return result
+  })
 }
 
-function queryAllRepliesByPrompt(promptId: TupleType) {
-  return myContract_read.queryAllRepliesByPrompt(promptId)
+function queryAllRepliesByPrompt(promptId: [number, number]) {
+  myContract_read.queryAllRepliesByPrompt(promptId).then((result: [string, string, string, string, number][]) => {
+    return result
+  })
 }
 
 function mint(templateId: number, question: string, context: string, to: string) {
-  return myContract_write._mint(templateId, question, context, to)
+  myContract_write._mint(templateId, question, context, to).then((result: [number, number]) => {
+    return result
+  })
 }
 
 function replyPrompt(
-  promptId: TupleType,
+  promptId: [number, number],
   replierAddr: string,
   replierName: string,
   replyDetail: string,
   comment: string,
   signature: number,
+  requester: string,
+  requesterAddr: string,
 ) {
-  return myContract_write._replyPrompt(
-    promptId,
-    replierAddr,
-    replierName,
-    replyDetail,
-    comment,
-    signature,
-  )
+  let message = "Hello World";
+
+  // TODO 
+  // Sign the string message
+  let flatSig = signer.signMessage(message).then((result: string) => {
+    return result
+    });
+
+  // // For Solidity, we need the expanded-format of a signature
+  // let sig = ethers.utils.splitSignature(flatSig);
+
+  // // Call the verifyString function
+  // let recovered = await contract.verifyString(message, sig.v, sig.r, sig.s);
+  const templateRef = doc(firestore, 'template-graph', promptId[0].toString())
+  getDoc(templateRef).then(snapshot => {
+    console.log(snapshot.data());
+    if (snapshot.data() !== undefined) {
+      updateDoc(templateRef, {
+        connections: arrayUnion({
+          replierName,
+          endorserAddr: replierAddr,
+          requester: requester,
+          requesterAddr: requesterAddr
+        })
+      });
+    }
+    else {
+      setDoc(templateRef, {
+        connections: arrayUnion({
+          replierName,
+          endorserAddr: replierAddr,
+          requester: requester,
+          requesterAddr: requesterAddr
+        })
+      });
+    }
+  });
+}
+// myContract_write._replyPrompt(
+//   promptId,
+//   replierAddr,
+//   replierName,
+//   replyDetail,
+//   comment,
+//   signature,
+// )
+
+function burnReplies(promptId: [number, number], replier: string) {
+  myContract_write._burnReplies(promptId, replier)
 }
 
-function burnReplies(promptId: TupleType, replier: string) {
-  return myContract_write._burnReplies(promptId, replier)
-}
-
-function burnPrompt(promptId: TupleType) {
-  return myContract_write._burnPrompt(promptId)
+function burnPrompt(promptId: [number, number]) {
+  myContract_write._burnPrompt(promptId)
 }

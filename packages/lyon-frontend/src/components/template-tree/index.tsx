@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import { useState } from 'react'
 import styles from './index.module.scss'
+import { firestore, doc, getDoc } from '../../firebase'
 import { Graph } from 'react-d3-graph'
 
 export interface TemplateTreeProps
@@ -36,6 +36,8 @@ const myConfig = {
   link: {
     highlightColor: 'lightblue',
   },
+  height: 6000,
+  width: 400,
 }
 
 const onClickNode = function (nodeId: string) {
@@ -44,6 +46,14 @@ const onClickNode = function (nodeId: string) {
 
 const onClickLink = function (source: string, target: string) {
   window.alert(`Clicked link between ${source} and ${target}`)
+}
+
+type nodeType = {
+  id: string
+}
+type linkType = {
+  source: string
+  target: string
 }
 
 const TemplateTree = ({ className, ...props }: TemplateTreeProps) => {
