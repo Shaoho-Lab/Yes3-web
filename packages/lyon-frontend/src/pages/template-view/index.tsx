@@ -2,6 +2,7 @@ import Checkbox from 'components/checkbox'
 import CommonLayout from 'components/common-layout'
 import styles from './index.module.scss'
 import TemplateTree from 'components/template-tree'
+import TemplateTrend from 'components/template-trend'
 
 const TemplateViewPage = () => {
   return (
@@ -19,7 +20,9 @@ const TemplateViewPage = () => {
           <div className={styles.confirm}>Ask the question</div>
         </div>
         <div className={styles.charts}>
-          <div className={styles.stats}></div>
+          <div className={styles.stats}>
+            <TemplateTrend />
+          </div>
           <div className={styles.graph}>
             <TemplateTree />
           </div>

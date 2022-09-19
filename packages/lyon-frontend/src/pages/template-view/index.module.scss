@@ -72,6 +72,8 @@
     .stats,
     .graph {
       flex: 1;
+      flex-shrink: 0;
+      
       height: 300px;
 
       background-color: #eeeeee;
