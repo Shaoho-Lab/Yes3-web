@@ -1,7 +1,9 @@
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import AppPage from 'pages/app'
 import LandingPage from 'pages/landing'
-import PromptViewPage from 'pages/prompt-view'
+import PromptPublicViewPage from 'pages/prompt-public-view'
+import PromptRequesterViewPage from 'pages/prompt-requester-view'
+import PromptReplierViewPage from 'pages/prompt-replier-view'
 import TemplateCreatePage from 'pages/template-create'
 import TemplateViewPage from 'pages/template-view'
 import UserProfilePage from 'pages/user-profile'
@@ -22,7 +24,9 @@ const router = createBrowserRouter([
   { path: '/app', element: <AppPage /> },
   { path: '/templates/create', element: <TemplateCreatePage /> },
   { path: '/templates/:templateId', element: <TemplateViewPage /> },
-  { path: '/prompts/:promptId', element: <PromptViewPage /> },
+  { path: '/prompts/:promptId', element: <PromptPublicViewPage /> },
+  { path: '/prompts/:promptId/:sender', element: <PromptRequesterViewPage /> },
+  { path: '/prompts/:promptId/reply', element: <PromptReplierViewPage /> }, // need to figure out how to generate the link for repliers
   { path: '/user/profile', element: <UserProfilePage /> },
 ])
 

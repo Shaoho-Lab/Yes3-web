@@ -1,0 +1,25 @@
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  version="1.1" 
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:svgjs="http://svgjs.dev/svgjs" 
+  viewBox="0 0 700 700" 
+  width="700" 
+  height="700" 
+  opacity="1">
+  <rect width="700" height="700" fill="black">
+  </rect>
+
+  <text font-size="30" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+    <tspan y="666" x="430">Powered by Lyon</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+    <tspan dy="3.5em" x="44">AM I A GOOD</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+    <tspan dy="4.5em" x="44">SOLIDITY</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+    <tspan dy="5.5em" x="44">ENGINEER?</tspan>
+  </text>
+</svg>

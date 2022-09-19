@@ -1,0 +1,54 @@
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  version="1.1" 
+  xmlnsXlink="http://www.w3.org/1999/xlink" 
+  xmlnsSvgjs="http://svgjs.dev/svgjs" 
+  viewBox="0 0 700 700" 
+  width="400" 
+  height="400" 
+  opacity="1">
+  <defs>
+    <linearGradient gradientTransform="rotate(120, 0.5, 0.5)" x1="50%" y1="0%" x2="50%" y2="100%" id="ffflux-gradient">
+      <stop stop-color="hsl(167, 72%, 60%)" stop-opacity="1" offset="0%"></stop>
+      <stop stop-color="hsl(37, 100%, 67%)" stop-opacity="1" offset="100%"></stop>
+    </linearGradient>
+    <filter id="ffflux-filter" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.001 0.001" numOctaves="2" seed="199" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence"></feTurbulence>
+      <feGaussianBlur stdDeviation="0 0" x="0%" y="0%" width="100%" height="100%" in="turbulence" edgeMode="duplicate" result="blur"></feGaussianBlur>
+      <feBlend mode="color-dodge" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" in2="blur" result="blend"></feBlend>
+    </filter>
+  </defs>
+  <rect width="700" height="700" fill="url(#ffflux-gradient)" filter="url(#ffflux-filter)">
+  </rect>
+
+  <text font-size="30" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+    <tspan y="666" x="430">Powered by Lyon</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica" font-weight="bold">
+    <tspan dy="2em" x="44">AM I A GOOD</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica" font-weight="bold">
+    <tspan dy="3em" x="44">SOLIDITY</tspan>
+  </text>
+  <text font-size="80" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica" font-weight="bold">
+    <tspan dy="4em" x="44">ENGINEER?</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="10em" x="44">a piece of shit!</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="10em" x="444">onjas.eth</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="11.5em" x="44">a true gem of shit!</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="11.5em" x="444">vitalik.eth</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="13em" x="44">support</tspan>
+  </text>
+  <text font-size="40" ref="rect" id="v-54" fill="#ff8100" font-family="helvetica">
+    <tspan dy="13em" x="444">yan.eth</tspan>
+  </text>
+</svg>

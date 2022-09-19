@@ -95,7 +95,7 @@ const Replied = () => {
   )
 }
 
-const PromptViewPage = () => {
+const PromptReplierViewPage = () => {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
 
@@ -108,4 +108,4 @@ const PromptViewPage = () => {
   }
 }
 
-export default PromptViewPage
+export default PromptReplierViewPage

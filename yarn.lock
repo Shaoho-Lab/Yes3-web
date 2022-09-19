@@ -9924,7 +9924,7 @@ react-app-polyfill@^3.0.0:
 
 react-d3-graph@^2.6.0:
   version "2.6.0"
-  resolved "https://registry.npmjs.org/react-d3-graph/-/react-d3-graph-2.6.0.tgz#b994131e430b568e086970560ba8a26809113173"
+  resolved "https://registry.npmmirror.com/react-d3-graph/-/react-d3-graph-2.6.0.tgz#b994131e430b568e086970560ba8a26809113173"
   integrity sha512-U72didZuPuYEqAi1n2bJvnph+9MviIw2x9I0eoxb1IKk3cyEwsJV96n3RL72z/7HDsa1FOvDKuOJE7ujSNZB/Q==
 
 react-dev-utils@^12.0.1:

@@ -1,0 +1,155 @@
+@import 'styles/mixins.scss';
+
+.page {
+  .heading {
+    font-size: 32px;
+    font-weight: bold;
+
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+
+  .intro {
+    font-size: 24px;
+    color: #00000080;
+
+    margin-bottom: 60px;
+  }
+
+  .questionList {
+    & > * {
+      margin-bottom: 15px;
+    }
+  }
+
+  .question {
+    font-size: 24px;
+
+    margin-bottom: 10px;
+  }
+
+  .stats {
+    font-size: 18px;
+    color: #00000080;
+
+    margin-bottom: 30px;
+  }
+
+  .options {
+    margin-bottom: 20px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    height: 70px;
+
+    .option {
+      flex: 1;
+
+      margin-right: 15px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      border: 2px solid #00000015;
+      border-radius: 15px;
+
+      font-size: 24px;
+
+      cursor: pointer;
+
+      &.selected {
+        border-color: #5856d6;
+        color: #5856d6;
+      }
+    }
+  }
+
+  .textarea {
+    margin-bottom: 20px;
+
+    appearance: none;
+    border: none;
+    resize: none;
+
+    width: 100%;
+    height: 150px;
+
+    font-size: 18px;
+
+    border-radius: 15px;
+    background-color: #f7f8f9;
+
+    padding: 20px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    .confirm,
+    .cancel {
+      @include buttonEffects;
+
+      user-select: none;
+
+      width: 200px;
+      height: 60px;
+
+      margin-left: 10px;
+      margin-right: 10px;
+
+      font-size: 18px;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 12px;
+    }
+
+    .confirm {
+      font-weight: bold;
+
+      background-color: #5856d6;
+      color: #ffffff;
+    }
+
+    .cancel {
+      background-color: #f5f5f5;
+      color: #000000;
+    }
+  }
+
+  .container{
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    gap: 40px;
+    padding-bottom: 40px;
+
+    .comment{
+      flex:1;
+      flex-grow: 4;
+      height: 50px;
+      font-size:22px;
+    }
+    .image{
+      flex:1;
+    }
+  }
+}

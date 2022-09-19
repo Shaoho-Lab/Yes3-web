@@ -7,7 +7,14 @@ export interface TemplateTreeProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const data = {
-  nodes: [{ id: 'Vitalik' }, { id: 'Jason' }, { id: 'zh3036' }, { id: 'Will' }, { id: 'Aego' }, { id: 'Yan' }],
+  nodes: [
+    { id: 'Vitalik' },
+    { id: 'Jason' },
+    { id: 'zh3036' },
+    { id: 'Will' },
+    { id: 'Aego' },
+    { id: 'Yan' },
+  ],
   links: [
     { source: 'Vitalik', target: 'Jason' },
     { source: 'Jason', target: 'zh3036' },
@@ -49,7 +56,6 @@ const TemplateTree = ({ className, ...props }: TemplateTreeProps) => {
         onClickNode={onClickNode}
         onClickLink={onClickLink}
       />
-      ;
     </div>
   )
 }

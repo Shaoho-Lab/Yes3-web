@@ -10,7 +10,6 @@ const TemplateViewPage = () => {
         Am I a good teammate in ETH Global Hackathon?
       </div>
       <div className={styles.content}>
-        <h1>Am I a good teammate in ETH Global Hackathon?</h1>
         <div className={styles.options}>
           <Checkbox label="Set as a private question" />
           <Checkbox label="Generate a password" />
