@@ -11,7 +11,9 @@ const TemplateViewPage = () => {
         <div className={styles.heading}>Am I a good solidity dev?</div>
         <div className={styles.heading}>info box</div>
         <div className={styles.charts}>
-          <div className={styles.stats}></div>
+          <div className={styles.stats}>
+            <TemplateTrend />
+          </div>
           <div className={styles.graph}>
             <TemplateTree />
           </div>
