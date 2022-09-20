@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styles from './index.module.scss'
 
-const REPLY_TYPES = ['Yes', 'No']
+const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
 const NotReplied = () => {
   const [comment, setComment] = useState('')

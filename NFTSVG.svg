@@ -7,19 +7,39 @@
   width="700" 
   height="700" 
   opacity="1">
-  <rect width="700" height="700" fill="black">
+  <font id="Font1" horiz-adv-x="1000">
+  <font-face font-family="Super Sans" font-weight="bold" font-style="normal"
+      units-per-em="100" cap-height="60" x-height="400"
+      ascent="300" descent="100"
+      alphabetic="0" mathematical="50" ideographic="400" hanging="500">
+    <font-face-src>
+      <font-face-name name="Super Sans Bold"/>
+    </font-face-src>
+  </font-face>
+  <missing-glyph><path d="M0,0h200v200h-200z"/></missing-glyph>
+  <glyph unicode="!" horiz-adv-x="300"><!-- Outline of exclam. pt. glyph --></glyph>
+  <glyph unicode="@"><!-- Outline of @ glyph --></glyph>
+  <!-- more glyphs -->
+</font>
+  <rect width="700" height="700" fill="#ffcb00">
   </rect>
 
-  <text font-size="30" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+  <text font-size="30" ref="rect" id="v-54" fill="#f8aa4b" font-family="sans serif" font-weight="bold">
     <tspan y="666" x="430">Powered by Lyon</tspan>
   </text>
-  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+      
+  <text font-size="80" ref="rect" id="v-54" fill="#ff6150" font-family="sans serif" font-weight="bold">
     <tspan dy="3.5em" x="44">AM I A GOOD</tspan>
   </text>
-  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+  <text font-size="80" ref="rect" id="v-54" fill="#ff6150" font-family="sans serif" font-weight="bold">
     <tspan dy="4.5em" x="44">SOLIDITY</tspan>
   </text>
-  <text font-size="80" ref="rect" id="v-54" fill="white" font-family="helvetica" font-weight="bold">
+  <text font-size="80" ref="rect" id="v-54" fill="#ff6150" font-family="sans serif" font-weight="bold">
     <tspan dy="5.5em" x="44">ENGINEER?</tspan>
   </text>
+  <a href="http://localhost:3000/app">
+    <text font-size="60" ref="rect" id="v-54" fill="#54d2d2" font-family="sans serif" font-weight="bold">
+      <tspan dy="9em" x="430">Ask Now</tspan>
+    </text>
+  </a>
 </svg>

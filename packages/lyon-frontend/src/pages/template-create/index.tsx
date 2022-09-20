@@ -8,7 +8,7 @@ const TemplateCreatePage = () => {
 
   return (
     <CommonLayout className={styles.page}>
-      <div className={styles.heading}>Create a new question template</div>
+      <div className={styles.heading}>Create a new prompt template</div>
       <div className={styles.description}>
         Each template is an NFT, you can trade it like any other NFT.
       </div>
@@ -21,8 +21,9 @@ const TemplateCreatePage = () => {
         }
       />
       <div className={styles.options}>
-        <Checkbox label="Some option A" />
-        <Checkbox label="Some option B" />
+        <div className={styles.description}>
+          Your frenz can respond either Yes, No, or I don't know to your prompt.
+        </div>
       </div>
       <div className={styles.buttons}>
         <div className={styles.cancel} onClick={() => window.history.back()}>

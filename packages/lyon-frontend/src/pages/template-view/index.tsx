@@ -8,21 +8,19 @@ const TemplateViewPage = () => {
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.content}>
-        <div className={styles.options}>
-          <Checkbox label="Set as a private question" />
-          <Checkbox label="Generate a password" />
+        <div className={styles.heading}>Am I a good solidity dev?</div>
+        <div className={styles.heading}>info box</div>
+        <div className={styles.charts}>
+          <div className={styles.stats}></div>
+          <div className={styles.graph}>
+            <TemplateTree />
+          </div>
         </div>
         <div className={styles.buttons}>
           <div className={styles.cancel} onClick={() => window.history.back()}>
             Back
           </div>
           <div className={styles.confirm}>Ask the question</div>
-        </div>
-        <div className={styles.charts}>
-          <div className={styles.stats}></div>
-          <div className={styles.graph}>
-            <TemplateTree />
-          </div>
         </div>
       </div>
     </CommonLayout>

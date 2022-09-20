@@ -16,7 +16,7 @@ const Navbar = ({ className, ...props }: NavbarProps) => {
   return (
     <div className={classNames(styles.navbar, className)} {...props}>
       <div className={styles.logo} onClick={() => navigate('/app')}>
-        Lyon
+        Yes3
       </div>
       {address ? (
         <img

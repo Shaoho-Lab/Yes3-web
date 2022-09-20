@@ -29,7 +29,7 @@ const UserProfilePage = () => {
       </Card>
       <div className={styles.heading}>My Prompts</div>
       <div className={styles.heading}>My Question Templates</div>
-      <div className={styles.heading}>My Replies</div>
+      <div className={styles.heading}>My Given Replies</div>
     </CommonLayout>
   )
 }
