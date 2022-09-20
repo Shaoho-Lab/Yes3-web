@@ -19,7 +19,9 @@ const TemplateViewPage = () => {
           <div className={styles.confirm}>Ask the question</div>
         </div>
         <div className={styles.charts}>
-          <div className={styles.stats}></div>
+          <div className={styles.stats}>
+            <TemplateTrend />
+          </div>
           <div className={styles.graph}>
             <TemplateTree />
           </div>
