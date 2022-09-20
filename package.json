@@ -9,8 +9,5 @@
     "server:build": "yarn workspace lyon-server build",
     "server:start": "yarn workspace lyon-server start"
   },
-  "dependencies": {
-    "flag": "^5.0.1",
-    "react-d3-graph": "^2.6.0"
-  }
+  "dependencies": {}
 }
