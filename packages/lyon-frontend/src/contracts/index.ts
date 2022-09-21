@@ -99,9 +99,9 @@ function queryAllRepliesByPrompt(promptId: [number, number]) {
   })
 }
 
-function mint(templateId: number, question: string, context: string, to: string) {
-  myContract_write._mint(templateId, question, context, to).then((result: [number, number]) => {
-    return result
+export function safeMint(templateId: number, question: string, context: string, to: string) {
+  myContract_write.safeMint(templateId, question, context, to).then(() => {
+    console.log('safeMint')
   })
 }
 

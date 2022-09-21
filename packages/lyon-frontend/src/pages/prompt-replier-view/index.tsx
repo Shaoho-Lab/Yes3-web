@@ -2,9 +2,12 @@ import classNames from 'classnames'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import QuestionCard from 'components/question-card'
-import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 import styles from './index.module.scss'
+import { firestore, doc, getDoc } from '../../firebase'
+import { useToast } from '@chakra-ui/react'
+import { useWeb3React } from '@web3-react/core'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
@@ -12,16 +15,59 @@ const NotReplied = () => {
   const [comment, setComment] = useState('')
   const [replyType, setReplyType] = useState(REPLY_TYPES[0])
 
+  const [question, setQuestion] = useState('')
+  const [questionContext, setQuestionContext] = useState('')
+  const [questionCount, setQuestionCount] = useState(0)
+  const [requesterAddr, setRequesterAddr] = useState('')
+
+  const { templateId, id } = useParams<{ templateId: string; id: string }>()
+  const toast = useToast()
+  const context = useWeb3React()
+  const { library, account, chainId } = context
+
+  useEffect(() => {
+    const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
+    getDoc(templateMetadataRef).then(snapshot => {
+      const fetchedData = snapshot.data()
+      if (fetchedData !== undefined) {
+        setQuestion(fetchedData.question)
+        setQuestionContext(fetchedData.context)
+        setQuestionCount(fetchedData.count)
+      }
+    })
+
+    const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
+    getDoc(promptMetadataRef).then(snapshot => {
+      setRequesterAddr(snapshot.data()?.[id!].promptOwner)
+    })
+  }, [])
+
+  const handleReply = async () => {
+    try {
+      if (account) {
+        console.log('account', account)
+        //TODO change wallet connect and sign message with better api/component
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: 'Reply failed',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }
+
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.heading}>
-        Reply to your friend <u>zh3036.eth</u>
+        Reply to your friend <u>{requesterAddr}</u>
       </div>
       <Card>
-        <div className={styles.question}>
-          Am I a good team member in ETH Global Hackathon?
-        </div>
-        <div className={styles.stats}>1.2k answers</div>
+        <div className={styles.question}>{question}</div>
+        <div className={styles.context}>{questionContext}</div>
+        <div className={styles.stats}>{questionCount} answers</div>
         <div className={styles.options}>
           {REPLY_TYPES.map(type => (
             <div

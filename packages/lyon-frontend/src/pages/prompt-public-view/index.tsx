@@ -2,9 +2,11 @@ import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import SBTimage from 'components/promptSVG/SBTSVG.svg'
 import TemplateTree from 'components/template-tree'
+import { useState } from 'react'
 import styles from './index.module.scss'
 
 const PromptPublicViewPage = () => {
+  const [templateId, setTemplateId] = useState("1");
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.heading}>
@@ -53,7 +55,7 @@ const PromptPublicViewPage = () => {
         </div>
         <div className={styles.charts}>
           <div className={styles.chart}></div>
-          <TemplateTree className={styles.graph} />
+          <TemplateTree className={styles.graph} templateId={templateId} />
         </div>
         <div className={styles.buttons}>
           <div className={styles.cancel} onClick={() => window.history.back()}>
