@@ -1,0 +1,35 @@
+:root{
+  --primary:#FC466B;
+  --secondary:#3F5EFB;
+}
+.body{
+  height:700px;
+  width:700px;
+  margin:0;
+  display: grid;
+  place-items:center;
+  place-content:center;
+ background:linear-gradient(135deg, var(--primary),var(--secondary));
+ background-size: 700px 700px;
+}
+
+.padding{
+  margin:10px;
+}
+
+h1{
+  font-family:"ubuntu";
+  font-size: 4.5rem;
+  color: white;
+  margin-left: 30px;
+}
+
+h2{
+  font-family:"ubuntu";
+  font-size: 3 rem;
+  color: white;
+  position: relative;
+  right: -10rem;
+  bottom:-6rem;
+  padding-right: 20;
+}

@@ -23,13 +23,9 @@ const TemplateViewPage = () => {
   const { library, account, chainId } = context
   const { templateId } = useParams<{ templateId: string }>()
   console.log('context', context)
-  
+
   useEffect(() => {
-    const templateMetadataRef = doc(
-      firestore,
-      'template-metadata',
-      templateId!,
-    )
+    const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
     getDoc(templateMetadataRef).then(snapshot => {
       const fetchedData = snapshot.data()
       if (fetchedData !== undefined) {
@@ -99,11 +95,7 @@ const TemplateViewPage = () => {
         ) //TODO: add uri
         const promptSafeMintResponseHash = promptSafeMintResponse.hash // TODO store hash
 
-        const templateRef = doc(
-          firestore,
-          'template-trend',
-          templateId!,
-        )
+        const templateRef = doc(firestore, 'template-trend', templateId!)
         getDoc(templateRef).then(snapshot => {
           const fetchedData = snapshot.data()
           const currentYear = new Date().getFullYear()
@@ -138,7 +130,7 @@ const TemplateViewPage = () => {
               })
             } else {
               setDoc(templateRef, {
-                'count': 1,
+                count: 1,
               })
             }
           } else {
@@ -157,7 +149,7 @@ const TemplateViewPage = () => {
     }
   }
 
-  return (question !== "" && questionContext !== "") ? (
+  return question !== '' && questionContext !== '' ? (
     <CommonLayout className={styles.page}>
       <div className={styles.content}>
         <div className={styles.heading}>{question}</div>

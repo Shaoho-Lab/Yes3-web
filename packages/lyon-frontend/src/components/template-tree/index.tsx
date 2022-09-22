@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react'
 
 export interface TemplateTreeProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-    templateId: string
-  }
+  templateId: string
+}
 
 // const data = {
 //   nodes: [
@@ -67,7 +67,11 @@ const onClickLink = function (source: string, target: string) {
   window.alert(`Clicked link between ${source} and ${target}`)
 }
 
-const TemplateTree = ({ className, templateId, ...props }: TemplateTreeProps) => {
+const TemplateTree = ({
+  className,
+  templateId,
+  ...props
+}: TemplateTreeProps) => {
   const [treeData, setTreeData] = useState<{
     nodes: { id: string }[]
     links: { source: string; target: string }[]

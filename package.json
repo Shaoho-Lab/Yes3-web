@@ -13,8 +13,10 @@
     "dom-to-image": "^2.6.0",
     "dom-to-svg": "^0.12.2",
     "flag": "^5.0.1",
+    "html-to-image": "^1.10.8",
     "html2svg": "^1.0.1",
     "nft.storage": "^7.0.0",
+    "package.json": "^2.0.1",
     "react-d3-graph": "^2.6.0",
     "recharts": "^2.1.14"
   }

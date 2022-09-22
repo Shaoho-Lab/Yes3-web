@@ -1,6 +1,6 @@
 const html2svg = require('html2svg')
 const input = '/Users/yan/Desktop/Lyon/Lyon-web/testPureHTML.html' // Or: http://google.com
-const output = 'testoutput.svg'
+const output = 'test.svg'
 
 ;(async function () {
   try {
