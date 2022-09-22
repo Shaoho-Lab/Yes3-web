@@ -17,11 +17,11 @@ const NFTSBTBox = ({
 }: NFTSBTBoxProps) => {
   return (
     <div className={styles.body} id="NFTSBT">
-      <h1>{question}</h1>
+      <h5>{question}</h5>
       <a href="www.google.com" color="white">
         {replyShow}
       </a>
-      <h2>Powered by Lyon with &lt;3</h2>
+      <h6>Powered by Lyon with &lt;3</h6>
     </div>
   )
 }

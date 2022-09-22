@@ -12,6 +12,9 @@ import LyonPrompt from 'contracts/LyonPrompt.json'
 import { firestore, doc, getDoc, updateDoc, setDoc } from '../../firebase'
 import { ethers } from 'ethers'
 import { useParams } from 'react-router-dom'
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
+import NFTSBTBox from 'components/NFTSBTBox'
 
 const TemplateViewPage = () => {
   const [question, setQuestion] = useState('')
@@ -23,6 +26,51 @@ const TemplateViewPage = () => {
   const { library, account, chainId } = context
   const { templateId } = useParams<{ templateId: string }>()
   console.log('context', context)
+
+  const options = {
+    title: 'Mint',
+    message: 'Mint Confirm',
+    buttons: [
+      {
+        label: 'Back',
+        onClick: () => alert('Click Back'),
+      },
+      {
+        label: 'Mint',
+        onClick: () => alert('Click Mint'),
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: 'overlay-custom-class-name',
+  }
+
+  const submit = () => {
+    confirmAlert({
+      title: 'Confirm to mint',
+      message: 'Are you sure to do this?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => alert('Click Yes'),
+          // onClick={() => {
+          //   handleConfirmMintTemplate()
+          // }}
+        },
+        {
+          label: 'No',
+          onClick: () => alert('Click No'),
+        },
+      ],
+      //NFTSBT: <NFTSBTBox question={question} replyShow={''} />,
+    })
+  }
 
   useEffect(() => {
     const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
@@ -168,9 +216,10 @@ const TemplateViewPage = () => {
           </div>
           <div
             className={styles.confirm}
-            onClick={() => {
-              handleConfirmMintTemplate()
-            }}
+            onClick={submit}
+            // onClick={() => {
+            //   handleConfirmMintTemplate()
+            // }}
           >
             Ask the question
           </div>
