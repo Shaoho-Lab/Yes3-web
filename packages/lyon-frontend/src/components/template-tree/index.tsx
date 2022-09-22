@@ -9,26 +9,6 @@ export interface TemplateTreeProps
   templateId: string
 }
 
-// const data = {
-//   nodes: [
-//     { id: 'Vitalik' },
-//     { id: 'Jason' },
-//     { id: 'zh3036' },
-//     { id: 'Will' },
-//     { id: 'Aego' },
-//     { id: 'Yan' },
-//   ],
-//   links: [
-//     { source: 'Vitalik', target: 'Jason' },
-//     { source: 'Jason', target: 'zh3036' },
-//     { source: 'Jason', target: 'Will' },
-//     { source: 'Aego', target: 'zh3036' },
-//     { source: 'Aego', target: 'Will' },
-//     { source: 'Yan', target: 'Jason' },
-//     { source: 'Will', target: 'zh3036' },
-//   ],
-// }
-
 const myConfig = {
   nodeHighlightBehavior: true,
   node: {

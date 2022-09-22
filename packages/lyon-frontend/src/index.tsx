@@ -15,6 +15,7 @@ import './index.scss'
 import reportWebVitals from './reportWebVitals'
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
+import { ChakraProvider } from "@chakra-ui/react";
 
 const client = createClient(getDefaultClient({ appName: 'Lyon' }))
 
@@ -46,13 +47,15 @@ const router = createBrowserRouter([
 
 root.render(
   <Web3ReactProvider getLibrary={getLibrary}>
-    <React.StrictMode>
-      <WagmiConfig client={client}>
-        <ConnectKitProvider>
-          <RouterProvider router={router} />
-        </ConnectKitProvider>
-      </WagmiConfig>
-    </React.StrictMode>
+    <ChakraProvider>
+      <React.StrictMode>
+        <WagmiConfig client={client}>
+          <ConnectKitProvider>
+            <RouterProvider router={router} />
+          </ConnectKitProvider>
+        </WagmiConfig>
+      </React.StrictMode>
+    </ChakraProvider>
     //{' '}
   </Web3ReactProvider>,
 )

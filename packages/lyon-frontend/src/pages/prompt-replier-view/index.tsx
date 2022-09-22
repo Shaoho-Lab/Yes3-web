@@ -8,6 +8,7 @@ import styles from './index.module.scss'
 import { firestore, doc, getDoc } from '../../firebase'
 import { useToast } from '@chakra-ui/react'
 import { useWeb3React } from '@web3-react/core'
+import { useSigner, useAccount, useSignMessage } from 'wagmi'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
@@ -19,11 +20,19 @@ const NotReplied = () => {
   const [questionContext, setQuestionContext] = useState('')
   const [questionCount, setQuestionCount] = useState(0)
   const [requesterAddr, setRequesterAddr] = useState('')
-
+  const [signatureHash, setSignatureHash] = useState('')
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const toast = useToast()
   const context = useWeb3React()
-  const { library, account, chainId } = context
+  const { data, error, signMessage } = useSignMessage({
+    onSuccess(data, variables) {
+      setSignatureHash(data)
+      // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
+    }
+  })
+  // const { library, account, chainId } = context
+  const { data: signer, isError, isLoading } = useSigner()
+  const { address, isConnecting, isDisconnected } = useAccount()
 
   useEffect(() => {
     const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
@@ -35,18 +44,20 @@ const NotReplied = () => {
         setQuestionCount(fetchedData.count)
       }
     })
-
+    
     const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
     getDoc(promptMetadataRef).then(snapshot => {
-      setRequesterAddr(snapshot.data()?.[id!].promptOwner)
+      setRequesterAddr(snapshot.data()?.[id!]?.promptOwner)
     })
   }, [])
 
   const handleReply = async () => {
     try {
-      if (account) {
-        console.log('account', account)
-        //TODO change wallet connect and sign message with better api/component
+      if (signer) {
+        const message = `I am replying to the question: ${question} with the context: ${questionContext} with the reply: ${replyType} and the comment: ${comment}`
+        signMessage({message})
+        console.log(signatureHash)
+        
       }
     } catch (error: any) {
       toast({
@@ -91,7 +102,9 @@ const NotReplied = () => {
           <div className={styles.cancel} onClick={() => window.history.back()}>
             Cancel
           </div>
-          <div className={styles.confirm}>Sign your reply</div>
+          <div className={styles.confirm} onClick={() => handleReply()}>
+            Sign your reply
+          </div>
         </div>
       </Card>
     </CommonLayout>
