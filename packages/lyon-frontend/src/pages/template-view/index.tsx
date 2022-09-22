@@ -8,16 +8,20 @@ import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Contract } from '@ethersproject/contracts'
 import LyonPrompt from 'contracts/LyonPrompt.json'
-import { firestore, doc, getDoc, updateDoc, setDoc, serverTimestamp } from '../../firebase'
+import {
+  firestore,
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  serverTimestamp,
+} from '../../firebase'
 import { ethers } from 'ethers'
 import { useParams } from 'react-router-dom'
-<<<<<<< HEAD
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import NFTSBTBox from 'components/NFTSBTBox'
-=======
 import { useSigner, useAccount } from 'wagmi'
->>>>>>> 30ee183bc2d7bc1c9770cc25e9a9a172a61f3597
 
 const TemplateViewPage = () => {
   const [question, setQuestion] = useState('')
@@ -32,7 +36,7 @@ const TemplateViewPage = () => {
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
   )
   const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected }  = useAccount()
+  const { address, isConnecting, isDisconnected } = useAccount()
   console.log('signerAddress', address)
 
   const options = {
@@ -183,7 +187,7 @@ const TemplateViewPage = () => {
         })
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-        getDoc(promptMetadataRef).then((snapshot) => {
+        getDoc(promptMetadataRef).then(snapshot => {
           const fetchedData = snapshot.data()!
           console.log(questionCount)
           const promptData = {
