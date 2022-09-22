@@ -39,7 +39,7 @@ const TemplateTrend = ({
         throw new Error('No data')
       }
     })
-  }, [])
+  }, [data])
 
   return trendData.length > 0 ? (
     <div className={classNames(styles.templateTrend, className)} {...props}>

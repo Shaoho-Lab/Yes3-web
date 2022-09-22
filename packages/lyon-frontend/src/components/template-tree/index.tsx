@@ -8,6 +8,7 @@ export interface TemplateTreeProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   templateId: string
 }
+<<<<<<< HEAD
 
 // const data = {
 //   nodes: [
@@ -28,6 +29,8 @@ export interface TemplateTreeProps
 //     { source: 'Will', target: 'zh3036' },
 //   ],
 // }
+=======
+>>>>>>> b177a6f (goal 34 finish and connect front/back end)
 
 const myConfig = {
   nodeHighlightBehavior: true,
