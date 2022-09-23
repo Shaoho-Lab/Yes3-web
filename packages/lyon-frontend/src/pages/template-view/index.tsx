@@ -153,6 +153,7 @@ const TemplateViewPage = () => {
         ) //TODO: add uri
         const promptSafeMintResponseHash = promptSafeMintResponse.hash // TODO store hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
+        const questionNumAnswersAdded = questionNumAnswers + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         getDoc(templateRef).then(snapshot => {
@@ -169,9 +170,9 @@ const TemplateViewPage = () => {
                     ? fetchedData[currentTime] + 1
                     : 1,
               },
-              numAnswers: questionNumAnswers + 1,
+              numAnswers: questionNumAnswersAdded,
             })
-            setQuestionNumAnswers(questionNumAnswers + 1)
+            // setQuestionNumAnswers(questionNumAnswers + 1)
           }
         })
 
@@ -189,11 +190,11 @@ const TemplateViewPage = () => {
 
           if (snapshot.exists()) {
             updateDoc(promptMetadataRef, {
-              [questionNumAnswers.toString()]: promptData,
+              [questionNumAnswersAdded.toString()]: promptData,
             })
           } else {
             setDoc(promptMetadataRef, {
-              [questionNumAnswers.toString()]: promptData,
+              [questionNumAnswersAdded.toString()]: promptData,
             })
           }
         })
