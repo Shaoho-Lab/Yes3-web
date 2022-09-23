@@ -83,18 +83,19 @@ const TemplateTree = ({
           links: [],
         }
         const templateData = fetchedData.connections
-        console.log(templateData)
-        for (var i = 0; i < templateData.length; i++) {
-          data.nodes.push({
-            id: getName(userAddressNameMapping, templateData[i].endorserAddress),
-          })
-          data.nodes.push({
-            id: getName(userAddressNameMapping, templateData[i].requesterAddress),
-          })
-          data.links.push({
-            source: getName(userAddressNameMapping, templateData[i].endorserAddress),
-            target: getName(userAddressNameMapping, templateData[i].requesterAddress),
-          })
+        if (templateData !== undefined) {
+          for (var i = 0; i < templateData.length; i++) {
+            data.nodes.push({
+              id: getName(userAddressNameMapping, templateData[i].endorserAddress),
+            })
+            data.nodes.push({
+              id: getName(userAddressNameMapping, templateData[i].requesterAddress),
+            })
+            data.links.push({
+              source: getName(userAddressNameMapping, templateData[i].endorserAddress),
+              target: getName(userAddressNameMapping, templateData[i].requesterAddress),
+            })
+          }
         }
         setTreeData(data)
       } else {
