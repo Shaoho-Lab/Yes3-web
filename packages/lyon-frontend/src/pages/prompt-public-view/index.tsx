@@ -10,19 +10,25 @@ import { firestore, doc, getDoc, updateDoc, setDoc } from '../../firebase'
 const PromptPublicViewPage = () => {
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
-  const [questionCount, setQuestionCount] = useState(0)
+  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
   const { templateId } = useParams<{ templateId: string }>()
   useEffect(() => {
-    const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
-    getDoc(templateMetadataRef).then(snapshot => {
-      const fetchedData = snapshot.data()
+    const loadTemplateData = async () => {
+      const templateMetadataRef = doc(
+        firestore,
+        'template-metadata',
+        templateId!,
+      )
+      const templateSnapshot = await getDoc(templateMetadataRef)
+      const fetchedData = templateSnapshot.data()
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
-        setQuestionCount(fetchedData.count)
-        console.log(question)
+        setQuestionNumAnswers(fetchedData.numAnswers)
       }
-    })
+    }
+    
+    loadTemplateData()
   }, [])
   //const [templateId, setTemplateId] = useState('1')
   const checkList = [
