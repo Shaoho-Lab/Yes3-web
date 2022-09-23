@@ -109,7 +109,7 @@ const TemplateTree = ({
     <div className={classNames(styles.templateTree, className)} {...props}>
       <Graph
         id="graph-id"
-        data={treeData}
+        data={treeData? treeData : {nodes: [], links: []}}
         config={myConfig}
         onClickNode={onClickNode}
         onClickLink={onClickLink}

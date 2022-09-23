@@ -131,6 +131,7 @@ const TemplateViewPage = () => {
           LyonTemplate.abi,
           signer,
         )
+
         const promptSafeMintResponse = await LyonPromptContract.safeMint(
           templateId,
           question,
@@ -138,8 +139,14 @@ const TemplateViewPage = () => {
           address,
           '',
         ) //TODO: add uri
+
         const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
+
+        const templateNewPrompMinted =
+          await LyonTemplateContract.newPrompMinted(templateId) 
+        console.log('templateNewPrompMinted', templateNewPrompMinted)
+
         const questionNumAnswersAdded = questionNumAnswers + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
@@ -158,7 +165,6 @@ const TemplateViewPage = () => {
               },
               numAnswers: questionNumAnswersAdded,
             })
-            // setQuestionNumAnswers(questionNumAnswers + 1)
           }
         })
 
