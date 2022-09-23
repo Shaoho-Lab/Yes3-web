@@ -5,36 +5,31 @@ import { getDefaultProvider } from 'ethers'
 import styles from './index.module.scss'
 import QuestionCards from 'components/question-cards'
 import { useEffect } from 'react'
-import {
-  firestore,
-  doc,
-  getDoc,
-  updateDoc,
-} from '../../firebase'
-import {useAccount} from 'wagmi'
-
+import { firestore, doc, getDoc, updateDoc } from '../../firebase'
+import { useAccount } from 'wagmi'
 
 const AppPage = () => {
   const navigate = useNavigate()
   const { address, isConnecting, isDisconnected } = useAccount()
-  console.log('address', address)
   useEffect(() => {
     const syncNameMapping = async () => {
       const userRef = doc(firestore, 'user-metadata', 'info')
       const userRefSnapshot = await getDoc(userRef)
       const userAddressNameMapping = userRefSnapshot.data()
 
-      if (userAddressNameMapping !== undefined && address!== undefined && userAddressNameMapping[address] === undefined) {
-        console.log('in')
+      if (
+        userAddressNameMapping !== undefined &&
+        address !== undefined &&
+        userAddressNameMapping[address] === undefined
+      ) {
         const providerETH = getDefaultProvider('homestead')
-        providerETH.lookupAddress(address).then((ENSName) => {
+        providerETH.lookupAddress(address).then(ENSName => {
           if (ENSName !== null) {
             updateDoc(userRef, {
               [address]: ENSName,
             })
           }
         })
-
       }
     }
 
