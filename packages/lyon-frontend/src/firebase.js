@@ -48,8 +48,6 @@ const firebaseConfig = {
   measurementId: "G-2G4XBVEFNG"
 };
 
-console.log(firebaseConfig);
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);

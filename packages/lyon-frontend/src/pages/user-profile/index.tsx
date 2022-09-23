@@ -39,7 +39,6 @@ const UserProfilePage = () => {
   const queryAll = async () => {
     try {
       if (account && library && chainId) {
-        console.log('account', account)
         if (chainId !== 80001) {
           await handleSwitchNetwork(80001)
           return
