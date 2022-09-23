@@ -99,7 +99,6 @@ const NotReplied = () => {
         const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
           [templateId, id],
           address,
-          '', //TODO name
           replyType,
           comment,
           signatureHash, // TODO: convert to bytes32
@@ -115,7 +114,6 @@ const NotReplied = () => {
                 comment: comment,
                 createTime: serverTimestamp(),
                 replierDetail: replyType,
-                replierName: '', //TODO: add name
                 signature: signatureHash,
               }
               console.log(replyData)

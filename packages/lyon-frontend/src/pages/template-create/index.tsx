@@ -104,6 +104,7 @@ const TemplateCreatePage = () => {
             trend: {},
             connections: [],
             createTime: serverTimestamp(),
+            templateURI: '',
           })
           console.log('templateId', templateCount)
           navigate(`/app`)
