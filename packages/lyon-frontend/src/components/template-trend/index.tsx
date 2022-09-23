@@ -24,22 +24,25 @@ const TemplateTrend = ({
 }: TemplateTrendProps) => {
   const [trendData, setTrendData] = useState<any>([])
   const data: any = []
-  
+
   useEffect(() => {
-    const templateRef = doc(firestore, 'template-trend', templateId)
-    getDoc(templateRef).then(snapshot => {
-      if (snapshot.data() !== undefined) {
+    const loadTrend = async () => {
+      const templateRef = doc(firestore, 'template-metadata', templateId)
+      const snapshot = await getDoc(templateRef)
+
+      if (snapshot.exists()) {
         const fetchedData = snapshot.data()
-        const trendKeys = Object.keys(fetchedData!).sort()
-        trendKeys.forEach(name => {
-          data.push({ timeInterval: name, count: fetchedData![name] })
+        const trend = fetchedData.trend
+        const trendKeys = Object.keys(trend).sort()
+        trendKeys.forEach((key) => {
+          data.push({ timeInterval: key, numAnswers: trend[key] })
         })
         setTrendData(data)
-      } else {
-        throw new Error('No data')
       }
-    })
-  }, [data])
+    }
+
+    loadTrend()
+  }, [])
 
   return trendData.length > 0 ? (
     <div className={classNames(styles.templateTrend, className)} {...props}>
@@ -52,7 +55,7 @@ const TemplateTrend = ({
         <XAxis dataKey="timeInterval" />
         <Tooltip />
         <CartesianGrid stroke="#f5f5f5" />
-        <Line type="monotone" dataKey="count" stroke="#ff7300" yAxisId={0} />
+        <Line type="monotone" dataKey="numAnswers" stroke="#ff7300" yAxisId={0} />
       </LineChart>
     </div>
   ) : null

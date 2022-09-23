@@ -4,6 +4,7 @@ import SearchBar from 'components/search-bar'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
 import styles from './index.module.scss'
+import QuestionCards from 'components/question-cards'
 
 const AppPage = () => {
   const navigate = useNavigate()
@@ -26,51 +27,7 @@ const AppPage = () => {
         </div>
       </div>
       <div className={styles.questionList}>
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
-        <QuestionCard
-          content="Do you recommend me to work at Ethereum Foundation?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={5}
-        />
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
-        <QuestionCard
-          content="Do you recommend me to work at Ethereum Foundation?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={5}
-        />
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
-        <QuestionCard
-          content="Do you recommend me to work at Ethereum Foundation?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={5}
-        />
+        <QuestionCards />
       </div>
     </div>
   )

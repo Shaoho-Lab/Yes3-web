@@ -61,9 +61,20 @@ const TemplateTree = ({
   })
 
   useEffect(() => {
-    const templateRef = doc(firestore, 'template-graph', templateId)
-    getDoc(templateRef).then(snapshot => {
-      if (snapshot.data() !== undefined) {
+    const getName = (userAddressNameMapping: any, address: string) => {
+      const name = userAddressNameMapping[address]
+      return name ? name : address
+    }
+    const loadGraph = async () => {
+      const userRef = doc(firestore, 'user-metadata', 'info')
+      const userRefSnapshot = await getDoc(userRef)
+      const userAddressNameMapping = userRefSnapshot.data()
+
+      const templateRef = doc(firestore, 'template-metadata', templateId)
+      const snapshot = await getDoc(templateRef)
+
+      if (snapshot.exists()) {
+        const fetchedData = snapshot.data()
         const data: {
           nodes: { id: string }[]
           links: { source: string; target: string }[]
@@ -71,20 +82,27 @@ const TemplateTree = ({
           nodes: [],
           links: [],
         }
-        const templateData = snapshot.data()?.connections
+        const templateData = fetchedData.connections
+        console.log(templateData)
         for (var i = 0; i < templateData.length; i++) {
-          data.nodes.push({ id: templateData[i].endorser })
-          data.nodes.push({ id: templateData[i].requester })
+          data.nodes.push({
+            id: getName(userAddressNameMapping, templateData[i].endorserAddress),
+          })
+          data.nodes.push({
+            id: getName(userAddressNameMapping, templateData[i].requesterAddress),
+          })
           data.links.push({
-            source: templateData[i].endorser,
-            target: templateData[i].requester,
+            source: getName(userAddressNameMapping, templateData[i].endorserAddress),
+            target: getName(userAddressNameMapping, templateData[i].requesterAddress),
           })
         }
         setTreeData(data)
       } else {
         throw new Error('No data')
       }
-    })
+    }
+
+    loadGraph()
   }, [])
   return (
     <div className={classNames(styles.templateTree, className)} {...props}>

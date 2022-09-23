@@ -1,14 +1,24 @@
 import classNames from 'classnames'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
-import QuestionCard from 'components/question-card'
 import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import styles from './index.module.scss'
-import { firestore, doc, getDoc } from '../../firebase'
+import {
+  firestore,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+  arrayUnion,
+} from '../../firebase'
 import { useToast } from '@chakra-ui/react'
 import { useWeb3React } from '@web3-react/core'
 import { useSigner, useAccount, useSignMessage } from 'wagmi'
+import QuestionCards from 'components/question-cards'
+import { ethers } from 'ethers'
+import { Contract } from '@ethersproject/contracts'
+import LyonPrompt from 'contracts/LyonPrompt.json'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
@@ -18,7 +28,7 @@ const NotReplied = () => {
 
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
-  const [questionCount, setQuestionCount] = useState(0)
+  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
   const [requesterAddr, setRequesterAddr] = useState('')
   const [signatureHash, setSignatureHash] = useState('')
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
@@ -28,38 +38,115 @@ const NotReplied = () => {
     onSuccess(data, variables) {
       setSignatureHash(data)
       // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
-    }
+    },
+    onError(error) {
+      toast({
+        title: 'Error',
+        description: 'Sign failed',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+    },
   })
   // const { library, account, chainId } = context
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
 
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
+  )
+  const adminPrivateKey =
+    '6ccc00445230bcf1994b43ca088b4029723e88c4e1fb01e652df03a51f1033b8'
+  const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
+
   useEffect(() => {
-    const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
-    getDoc(templateMetadataRef).then(snapshot => {
-      const fetchedData = snapshot.data()
+    const loadPromptData = async () => {
+      const templateMetadataRef = doc(
+        firestore,
+        'template-metadata',
+        templateId!,
+      )
+      const templateSnapshot = await getDoc(templateMetadataRef)
+      const fetchedData = templateSnapshot.data()
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
-        setQuestionCount(fetchedData.count)
+        setQuestionNumAnswers(fetchedData.numAnswers)
       }
-    })
-    
-    const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-    getDoc(promptMetadataRef).then(snapshot => {
-      setRequesterAddr(snapshot.data()?.[id!]?.promptOwner)
-    })
+
+      const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
+      const promptSnapshot = await getDoc(promptMetadataRef)
+      setRequesterAddr(promptSnapshot.data()?.[id!]?.promptOwner)
+    }
+
+    loadPromptData()
   }, [])
 
   const handleReply = async () => {
     try {
       if (signer) {
-        const message = `I am replying to the question: ${question} with the context: ${questionContext} with the reply: ${replyType} and the comment: ${comment}`
-        signMessage({message})
+        const message = `${address} am replying to the question: ${question} with the context: ${questionContext} with the reply: ${replyType} from ${requesterAddr} and the comment: ${comment}`
+        // signMessage({ message })
         console.log(signatureHash)
-        
+
+        const LyonPromptContract = new Contract(
+          '0xb6Dd3FA5C9F212ca4a22635690DC1Cc1b8430388',
+          LyonPrompt.abi,
+          signerAdmin,
+        )
+        console.log('here')
+        const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
+          [templateId, id],
+          address,
+          '', //TODO name
+          replyType,
+          comment,
+          signatureHash, // TODO: convert to bytes32
+        ) //TODO: add uri
+        console.log(ReplyPromptResponse)
+
+        //   const promptRef = doc(firestore, 'prompt-metadata', templateId!)
+        //   console.log('promptRef', promptRef)
+        //   getDoc(promptRef).then(snapshot => {
+        //     const fetchedData = snapshot.data()?.[id!]
+        //     if (fetchedData !== undefined) {
+        //       const replyData = {
+        //         comment: comment,
+        //         createTime: serverTimestamp(),
+        //         replierDetail: replyType,
+        //         replierName: '', //TODO: add name
+        //         signature: signatureHash,
+        //       }
+        //       console.log(replyData)
+        //       updateDoc(promptRef, {
+        //         [id!]: {
+        //           ...fetchedData,
+        //           keys: arrayUnion(address),
+        //           replies: {
+        //             ...fetchedData.replies,
+        //             [address!]: replyData,
+        //           },
+        //         },
+        //       })
+        //     }
+        //   })
+
+        //   const templateRef = doc(firestore, 'template-metadata', templateId!)
+        //   getDoc(templateRef).then(snapshot => {
+        //     const fetchedData = snapshot.data()?.connections
+        //     if (fetchedData !== undefined) {
+        //       updateDoc(templateRef, {
+        //         connections: arrayUnion({
+        //           endorserAddress: address,
+        //           requesterAddress: requesterAddr,
+        //         }),
+        //       })
+        //     }
+        //   })
       }
     } catch (error: any) {
+      console.log(error)
       toast({
         title: 'Error',
         description: 'Reply failed',
@@ -78,7 +165,7 @@ const NotReplied = () => {
       <Card>
         <div className={styles.question}>{question}</div>
         <div className={styles.context}>{questionContext}</div>
-        <div className={styles.stats}>{questionCount} answers</div>
+        <div className={styles.stats}>{questionNumAnswers} answers</div>
         <div className={styles.options}>
           {REPLY_TYPES.map(type => (
             <div
@@ -119,36 +206,7 @@ const Replied = () => {
         Now you can see some other popular questions on Lyon...
       </div>
       <div className={styles.questionList}>
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
-        <QuestionCard
-          content="Am I a good Solidity engineer?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={20}
-        />
-        <QuestionCard
-          content="Am I a good team member in ETH Global Hackathon?"
-          ownerAddress="0xf5d6348B82e2049D72DbfC91c41E224dC19c7296"
-          numAnswers={128}
-        />
+        <QuestionCards />
       </div>
     </CommonLayout>
   )

@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom'
 import styles from './index.module.scss'
 
 export interface QuestionCardProps extends Omit<CardProps, 'children'> {
+  templateId: string
   content: string
   ownerAddress: string
   numAnswers?: number
 }
 
 const QuestionCard = ({
+  templateId,
   content,
   ownerAddress,
   numAnswers = 0,
@@ -35,7 +37,7 @@ const QuestionCard = ({
         </div>
         <div
           className={styles.button}
-          onClick={() => navigate('/templates/0x123456781234567812345678')}
+          onClick={() => navigate('/templates/' + templateId)}
         >
           Ask this question
         </div>
