@@ -23,7 +23,7 @@ const Navbar = ({ className, ...props }: NavbarProps) => {
           className={styles.jazzicon}
           src={buildJazziconDataUrl(address)}
           alt={address}
-          onClick={() => navigate('/user/profile')}
+          onClick={() => navigate(`/user/profile/${address}`)}
         />
       ) : (
         <ConnectKitButton />
