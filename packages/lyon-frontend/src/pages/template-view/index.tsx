@@ -186,9 +186,16 @@ const TemplateViewPage = () => {
             createTime: serverTimestamp(),
             SBTURI: '', // TODO add uri
           }
-          updateDoc(promptMetadataRef, {
-            [questionNumAnswers.toString()]: promptData,
-          })
+
+          if (snapshot.exists()) {
+            updateDoc(promptMetadataRef, {
+              [questionNumAnswers.toString()]: promptData,
+            })
+          } else {
+            setDoc(promptMetadataRef, {
+              [questionNumAnswers.toString()]: promptData,
+            })
+          }
         })
       }
     } catch (error: any) {
