@@ -1,5 +1,4 @@
 import { useToast } from '@chakra-ui/react'
-import Checkbox from 'components/checkbox'
 import CommonLayout from 'components/common-layout'
 import styles from './index.module.scss'
 import TemplateTree from 'components/template-tree'
@@ -21,8 +20,9 @@ import { ethers } from 'ethers'
 import { useParams } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import PopupProps from 'components/popup'
 import { useSigner, useAccount } from 'wagmi'
+import Popup from 'components/popup'
+import NFTSBTMintBox from 'components/NFTSBTMintBox'
 
 const TemplateViewPage = () => {
   const [question, setQuestion] = useState('')
@@ -31,6 +31,13 @@ const TemplateViewPage = () => {
   const [chainId, setChainId] = useState(80001)
   const toast = useToast()
   const context = useWeb3React()
+  const [buttonPopup, setButtonPopup] = useState(false)
+  const [mintConfirm, setMintConfirm] = useState(false)
+  const handleClick = () => {
+    if (mintConfirm != true) {
+      setMintConfirm(current => !current)
+    }
+  }
   // const { library, account, chainId } = context
   const { templateId } = useParams<{ templateId: string }>()
   const provider = new ethers.providers.JsonRpcProvider(
@@ -59,11 +66,6 @@ const TemplateViewPage = () => {
       //NFTSBT: <NFTSBTBox question={question} replyShow={''} />,
     })
   }
-
-  // const popup =() => {
-  //   render{
-  //     <PopupProps/>
-  // }}
 
   useEffect(() => {
     const loadTemplateData = async () => {
@@ -108,6 +110,10 @@ const TemplateViewPage = () => {
       })
     }
   }
+
+  // need change after getting the real id!!!!
+  const id = '1'
+
   const handleMintPrompt = async () => {
     try {
       if (provider && signer && chainId) {
@@ -188,6 +194,7 @@ const TemplateViewPage = () => {
         isClosable: true,
       })
     }
+    handleClick()
   }
 
   return question !== '' && questionContext !== '' ? (
@@ -203,6 +210,7 @@ const TemplateViewPage = () => {
             <TemplateTree templateId={templateId!} />
           </div>
         </div>
+        <br></br>
         <div className={styles.buttons}>
           <div className={styles.cancel} onClick={() => window.history.back()}>
             Back
@@ -210,12 +218,40 @@ const TemplateViewPage = () => {
           <div
             className={styles.confirm}
             // onClick={submit}
-            onClick={() => {
-              handleMintPrompt()
-            }}
+            onClick={() => setButtonPopup(true)}
           >
             Ask the question
           </div>
+          <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+            <NFTSBTMintBox question={question} replyShow={''} />
+            <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+              Preview your SBT, then click the button to mint your SBT!
+            </h1>
+            <br></br>
+            <div style={{ display: 'flex' }}>
+              <div
+                className={styles.confirm}
+                onClick={() => {
+                  handleMintPrompt()
+                }}
+              >
+                Confirm
+              </div>
+              {mintConfirm && (
+                <div>
+                  <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+                    Mint Success - Congrats!
+                  </h1>
+                  <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+                    Share this link to your friends for reply：
+                    <a href="abc.com">
+                      https://lyonprotocol.xyz/prompts/{templateId}/{id}
+                    </a>
+                  </h1>
+                </div>
+              )}
+            </div>
+          </Popup>
         </div>
       </div>
     </CommonLayout>

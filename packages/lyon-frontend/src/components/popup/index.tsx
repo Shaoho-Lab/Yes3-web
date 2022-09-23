@@ -1,49 +1,45 @@
+// import React from 'react'
+// import Popup from './popupModal'
+
+// interface PopupWrapperProps {
+//   isVisible: boolean
+//   onClose: () => void
+// }
+
+// const PopupWrapper: React.FC<PopupWrapperProps> = ({ onClose, isVisible }) => {
+//   if (!isVisible) {
+//     return null
+//   }
+//   return <Popup onClose={onClose} />
+// }
+
+//export default PopupWrapper
 import React, { ButtonHTMLAttributes, HtmlHTMLAttributes } from 'react'
 import styles from './index.module.scss'
-import { firestore, doc, getDoc } from '../../firebase'
-import { useState, useEffect } from 'react'
-import NFTSBTBox from 'components/NFTSBTBox'
 
-export interface PopupProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  question: string
-  replyShow: string
-  targetId?: string
-  title?: string
-  message?: string
-  buttons?: Array<
-    {
-      label: string
-      className?: string
-    } & ButtonHTMLAttributes<HTMLButtonElement>
-  >
-  childrenElement?: () => React.ReactNode
-  customUI?: (customUiOptions: {
-    title: string
-    message: string
-    onClose: () => void
-  }) => React.ReactNode
-  closeOnClickOutside?: boolean
+interface PopupProps {
+  setTrigger: any
+  trigger: boolean
+  children?: React.ReactNode
 }
 
-const PopupProps = ({
-  className,
-  question,
-  replyShow,
-  ...props
-}: PopupProps) => {
-  return (
-    <div className={styles.alertOverlay}>
-      <div className={styles.body} id="NFTSBT">
-        <h5>{question}</h5>
-        <a href="www.google.com" color="white">
-          {replyShow}
-        </a>
-        <h6>Powered by Lyon with &lt;3</h6>
+function Popup(props: PopupProps) {
+  return props.trigger ? (
+    <div className={styles.popup}>
+      <div className={styles.popupInner}>
+        <div className={styles.title}>Mint</div>
+        <button
+          className={styles.closeBtn}
+          onClick={() => props.setTrigger(false)}
+        >
+          x
+        </button>
+        {props.children}
       </div>
     </div>
+  ) : (
+    <></>
   )
 }
-//export function confirmAlert(options: PopupProps): void
 
-export default PopupProps
+export default Popup

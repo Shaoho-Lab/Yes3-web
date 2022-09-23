@@ -18,14 +18,23 @@ import {
   databaseGet,
 } from '../../firebase'
 import { useNavigate } from 'react-router-dom'
+import Popup from 'components/popup'
+import NFTSBTMintBox from 'components/NFTSBTMintBox'
 
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
   const [templateContext, setTemplateContext] = useState('')
   // const [templateId, setTemplateId] = useState(0)
+  const [buttonPopup, setButtonPopup] = useState(false)
+  const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
   const navigate = useNavigate()
   const toast = useToast()
+  const handleClick = () => {
+    if (mintConfirm != true) {
+      setMintConfirm(current => !current)
+    }
+  }
 
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
@@ -59,6 +68,9 @@ const TemplateCreatePage = () => {
       })
     }
   }
+
+  // need to change after we can get tempalteId from mint
+  const templateId = '1'
 
   const handleMintTemplate = async () => {
     try {
@@ -119,6 +131,7 @@ const TemplateCreatePage = () => {
         isClosable: true,
       })
     }
+    handleClick()
   }
 
   return (
@@ -152,9 +165,37 @@ const TemplateCreatePage = () => {
         <div className={styles.cancel} onClick={() => window.history.back()}>
           Cancel
         </div>
-        <div className={styles.confirm} onClick={() => handleMintTemplate()}>
+        <div className={styles.confirm} onClick={() => setButtonPopup(true)}>
           Mint
         </div>
+        <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+          <NFTSBTMintBox question={templateQuestion} replyShow={''} />
+          <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+            Preview your SBT, then click the button to mint your SBT!
+          </h1>
+          <br></br>
+          <div style={{ display: 'flex' }}>
+            <div
+              className={styles.confirm}
+              onClick={() => handleMintTemplate()}
+            >
+              Confirm
+            </div>
+            {mintConfirm && (
+              <div>
+                <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+                  Mint Success - Congrats!
+                </h1>
+                <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+                  Find your question NFT here:
+                  <a href="abc.com">
+                    https://lyonprotocol.xyz/templates/{templateId}
+                  </a>
+                </h1>
+              </div>
+            )}
+          </div>
+        </Popup>
       </div>
     </CommonLayout>
   )
