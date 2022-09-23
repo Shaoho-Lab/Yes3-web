@@ -17,13 +17,14 @@ import {
   collection,
   databaseGet,
 } from '../../firebase'
+import { useNavigate } from 'react-router-dom'
 
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
   const [templateContext, setTemplateContext] = useState('')
-  const [templateId, setTemplateId] = useState(0)
+  // const [templateId, setTemplateId] = useState(0)
   const [chainId, setChainId] = useState(80001)
-
+  const navigate = useNavigate()
   const toast = useToast()
 
   const provider = new ethers.providers.JsonRpcProvider(
@@ -90,11 +91,10 @@ const TemplateCreatePage = () => {
         updateDoc(templateMetadataRef, {
           count: templateCount,
         }).then(() => {
-          setTemplateId(templateCount)
           const templateRef = doc(
             firestore,
             'template-metadata',
-            templateId!.toString(),
+            templateCount!.toString(),
           )
           setDoc(templateRef, {
             question: templateQuestion,
@@ -105,7 +105,8 @@ const TemplateCreatePage = () => {
             connections: [],
             createTime: serverTimestamp(),
           })
-          console.log('templateId', templateId)
+          console.log('templateId', templateCount)
+          navigate(`/app`)
         })
       }
     } catch (error: any) {
