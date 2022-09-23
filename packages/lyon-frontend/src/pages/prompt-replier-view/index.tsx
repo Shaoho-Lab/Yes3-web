@@ -19,6 +19,7 @@ import QuestionCards from 'components/question-cards'
 import { ethers } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
 import LyonPrompt from 'contracts/LyonPrompt.json'
+import { getDefaultProvider } from '@ethersproject/providers'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
@@ -30,6 +31,7 @@ const NotReplied = () => {
   const [questionContext, setQuestionContext] = useState('')
   const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
   const [requesterAddr, setRequesterAddr] = useState('')
+  const [requesterName, setRequesterName] = useState('')
   const [signatureHash, setSignatureHash] = useState('')
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const toast = useToast()
@@ -37,6 +39,7 @@ const NotReplied = () => {
   const { data, error, signMessage } = useSignMessage({
     onSuccess(data, variables) {
       setSignatureHash(data)
+      console.log('signature', data)
       // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
     },
     onError(error) {
@@ -60,6 +63,18 @@ const NotReplied = () => {
     '6ccc00445230bcf1994b43ca088b4029723e88c4e1fb01e652df03a51f1033b8'
   const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
 
+  const getName = (userAddressNameMapping: any, address: string) => {
+    const name = userAddressNameMapping[address]
+    return name ? name : address
+  }
+
+  // TODO: ENS detect
+  // const providerETH = getDefaultProvider('homestead')
+  // providerETH.lookupAddress("0x5555763613a12D8F3e73be831DFf8598089d3dCa").then((name) => {
+  //   console.log("name", name)
+  // })
+  
+
   useEffect(() => {
     const loadPromptData = async () => {
       const templateMetadataRef = doc(
@@ -75,9 +90,18 @@ const NotReplied = () => {
         setQuestionNumAnswers(fetchedData.numAnswers)
       }
 
-      const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-      const promptSnapshot = await getDoc(promptMetadataRef)
-      setRequesterAddr(promptSnapshot.data()?.[id!]?.promptOwner)
+      const userRef = doc(firestore, 'user-metadata', 'info')
+      const userRefSnapshot = await getDoc(userRef)
+      const userAddressNameMapping = userRefSnapshot.data()
+      if (userAddressNameMapping !== undefined) {
+        const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
+        const promptSnapshot = await getDoc(promptMetadataRef)
+        const requesterAddr = promptSnapshot.data()?.[id!]?.promptOwner
+        setRequesterAddr(requesterAddr!)
+        setRequesterAddr(requesterAddr)
+        setRequesterName(getName(userAddressNameMapping, requesterAddr))
+        //
+      }
     }
 
     loadPromptData()
@@ -87,66 +111,65 @@ const NotReplied = () => {
     try {
       if (signer) {
         const message = `${address} am replying to the question: ${question} with the context: ${questionContext} with the reply: ${replyType} from ${requesterAddr} and the comment: ${comment}`
-        // signMessage({ message })
-        console.log(signatureHash)
+        signMessage({ message })
 
         const LyonPromptContract = new Contract(
-          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
+          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
           LyonPrompt.abi,
           signerAdmin,
         )
-        console.log('here')
-        // const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
-        //   [templateId, id],
-        //   address,
-        //   replyType,
-        //   comment,
-        //   "0x7465737400000000000000000000000000000000000000000000000000000000", // TODO: convert to bytes32
-        // ) //TODO: add uri
-        // console.log(ReplyPromptResponse)
+        const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
+          [templateId, id],
+          address,
+          replyType,
+          comment,
+          signatureHash,
+        ) //TODO: add uri
+        console.log(ReplyPromptResponse)
 
-          const promptRef = doc(firestore, 'prompt-metadata', templateId!)
-          console.log('promptRef', promptRef)
-          console.log(address)
-          getDoc(promptRef).then(snapshot => {
-            const fetchedData = snapshot.data()?.[id!]
-            if (fetchedData !== undefined) {
-              const replyData = {
-                comment: comment,
-                createTime: serverTimestamp(),
-                replierDetail: replyType,
-                signature: signatureHash,
-              }
-              console.log(replyData)
-              updateDoc(promptRef, {
-                [id!]: {
-                  // ...fetchedData, //TODO: check 
-                  keys: arrayUnion(address),
-                  replies: {
-                    ...fetchedData.replies,
-                    [address!]: replyData,
-                  },
-                },
-              })
+        const promptRef = doc(firestore, 'prompt-metadata', templateId!)
+        getDoc(promptRef).then(snapshot => {
+          const fetchedData = snapshot.data()?.[id!]
+          if (fetchedData !== undefined) {
+            const replyData = {
+              comment: comment,
+              createTime: serverTimestamp(),
+              replierDetail: replyType,
+              signature: signatureHash,
             }
-          })
 
-          const templateRef = doc(firestore, 'template-metadata', templateId!)
-          getDoc(templateRef).then(snapshot => {
-            const fetchedData = snapshot.data()?.connections
-            if (fetchedData !== undefined) {
-              updateDoc(templateRef, {
-                // ...fetchedData, //TODO: Check
-                connections: arrayUnion({
-                  endorserAddress: address,
-                  requesterAddress: requesterAddr,
-                }),
-              })
+            const keysList = fetchedData.keys
+            if (!keysList.includes(address)) {
+              keysList.push(address)
             }
-          })
+            const updateReplyData = {
+              ...fetchedData,
+              keys: keysList,
+              replies: {
+                ...fetchedData.replies,
+                [address!]: replyData,
+              },
+            }
+            updateDoc(promptRef, {
+              [id!]: updateReplyData,
+            })
+          }
+        })
+
+        const templateRef = doc(firestore, 'template-metadata', templateId!)
+        getDoc(templateRef).then(snapshot => {
+          const fetchedData = snapshot.data()?.connections
+          if (fetchedData !== undefined) {
+            updateDoc(templateRef, {
+              connections: arrayUnion({
+                endorserAddress: address,
+                requesterAddress: requesterAddr,
+              }),
+            })
+          }
+        })
       }
     } catch (error: any) {
-      console.log(error)
       toast({
         title: 'Error',
         description: 'Reply failed',
@@ -160,7 +183,7 @@ const NotReplied = () => {
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.heading}>
-        Reply to your friend <u>{requesterAddr}</u>
+        Reply to your friend <u>{requesterName}</u>
       </div>
       <Card>
         <div className={styles.question}>{question}</div>

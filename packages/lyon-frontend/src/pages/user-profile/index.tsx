@@ -35,9 +35,6 @@ const UserProfilePage = () => {
       })
     }
   }
-  console.log(account)
-  console.log(chainId)
-  console.log(library)
 
   const queryAll = async () => {
     try {
@@ -53,7 +50,7 @@ const UserProfilePage = () => {
           context.library.getSigner(context.account),
         )
         const LyonPromptContract = new Contract(
-          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
+          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
           LyonPrompt.abi,
           context.library.getSigner(context.account),
         )
