@@ -135,7 +135,7 @@ const TemplateViewPage = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
+          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
           LyonPrompt.abi,
           signer,
         )
@@ -151,7 +151,7 @@ const TemplateViewPage = () => {
           address,
           '',
         ) //TODO: add uri
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash // TODO store hash
+        const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
         const questionNumAnswersAdded = questionNumAnswers + 1
 
@@ -164,7 +164,6 @@ const TemplateViewPage = () => {
           if (fetchedData !== undefined) {
             updateDoc(templateRef, {
               trend: {
-                // ...fetchedData, // TODO check
                 [currentTime]:
                   fetchedData[currentTime] !== undefined
                     ? fetchedData[currentTime] + 1
