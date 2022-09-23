@@ -20,7 +20,7 @@ import { ethers } from 'ethers'
 import { useParams } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import NFTSBTBox from 'components/NFTSBTBox'
+import PopupProps from 'components/popup'
 import { useSigner, useAccount } from 'wagmi'
 
 const TemplateViewPage = () => {
@@ -38,30 +38,6 @@ const TemplateViewPage = () => {
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
   console.log('signerAddress', address)
-
-  const options = {
-    title: 'Mint',
-    message: 'Mint Confirm',
-    buttons: [
-      {
-        label: 'Back',
-        onClick: () => alert('Click Back'),
-      },
-      {
-        label: 'Mint',
-        onClick: () => alert('Click Mint'),
-      },
-    ],
-    closeOnEscape: true,
-    closeOnClickOutside: true,
-    keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
-    overlayClassName: 'overlay-custom-class-name',
-  }
 
   const submit = () => {
     confirmAlert({
@@ -83,6 +59,11 @@ const TemplateViewPage = () => {
       //NFTSBT: <NFTSBTBox question={question} replyShow={''} />,
     })
   }
+
+  const popup =() => {
+    render{
+      <PopupProps/>
+  }}
 
   useEffect(() => {
     const templateMetadataRef = doc(firestore, 'template-metadata', templateId!)
