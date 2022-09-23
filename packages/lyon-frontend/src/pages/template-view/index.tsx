@@ -163,7 +163,7 @@ const TemplateViewPage = () => {
           if (fetchedData !== undefined) {
             updateDoc(templateRef, {
               trend: {
-                ...fetchedData,
+                // ...fetchedData, // TODO check
                 [currentTime]:
                   fetchedData[currentTime] !== undefined
                     ? fetchedData[currentTime] + 1

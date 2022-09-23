@@ -106,44 +106,45 @@ const NotReplied = () => {
         ) //TODO: add uri
         console.log(ReplyPromptResponse)
 
-        //   const promptRef = doc(firestore, 'prompt-metadata', templateId!)
-        //   console.log('promptRef', promptRef)
-        //   getDoc(promptRef).then(snapshot => {
-        //     const fetchedData = snapshot.data()?.[id!]
-        //     if (fetchedData !== undefined) {
-        //       const replyData = {
-        //         comment: comment,
-        //         createTime: serverTimestamp(),
-        //         replierDetail: replyType,
-        //         replierName: '', //TODO: add name
-        //         signature: signatureHash,
-        //       }
-        //       console.log(replyData)
-        //       updateDoc(promptRef, {
-        //         [id!]: {
-        //           ...fetchedData,
-        //           keys: arrayUnion(address),
-        //           replies: {
-        //             ...fetchedData.replies,
-        //             [address!]: replyData,
-        //           },
-        //         },
-        //       })
-        //     }
-        //   })
+          const promptRef = doc(firestore, 'prompt-metadata', templateId!)
+          console.log('promptRef', promptRef)
+          getDoc(promptRef).then(snapshot => {
+            const fetchedData = snapshot.data()?.[id!]
+            if (fetchedData !== undefined) {
+              const replyData = {
+                comment: comment,
+                createTime: serverTimestamp(),
+                replierDetail: replyType,
+                replierName: '', //TODO: add name
+                signature: signatureHash,
+              }
+              console.log(replyData)
+              updateDoc(promptRef, {
+                [id!]: {
+                  ...fetchedData, //TODO: check 
+                  keys: arrayUnion(address),
+                  replies: {
+                    ...fetchedData.replies,
+                    [address!]: replyData,
+                  },
+                },
+              })
+            }
+          })
 
-        //   const templateRef = doc(firestore, 'template-metadata', templateId!)
-        //   getDoc(templateRef).then(snapshot => {
-        //     const fetchedData = snapshot.data()?.connections
-        //     if (fetchedData !== undefined) {
-        //       updateDoc(templateRef, {
-        //         connections: arrayUnion({
-        //           endorserAddress: address,
-        //           requesterAddress: requesterAddr,
-        //         }),
-        //       })
-        //     }
-        //   })
+          const templateRef = doc(firestore, 'template-metadata', templateId!)
+          getDoc(templateRef).then(snapshot => {
+            const fetchedData = snapshot.data()?.connections
+            if (fetchedData !== undefined) {
+              updateDoc(templateRef, {
+                ...fetchedData, //TODO: Check
+                connections: arrayUnion({
+                  endorserAddress: address,
+                  requesterAddress: requesterAddr,
+                }),
+              })
+            }
+          })
       }
     } catch (error: any) {
       console.log(error)
