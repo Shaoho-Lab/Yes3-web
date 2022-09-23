@@ -91,22 +91,23 @@ const NotReplied = () => {
         console.log(signatureHash)
 
         const LyonPromptContract = new Contract(
-          '0xb6Dd3FA5C9F212ca4a22635690DC1Cc1b8430388',
+          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
           LyonPrompt.abi,
           signerAdmin,
         )
         console.log('here')
-        const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
-          [templateId, id],
-          address,
-          replyType,
-          comment,
-          signatureHash, // TODO: convert to bytes32
-        ) //TODO: add uri
-        console.log(ReplyPromptResponse)
+        // const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
+        //   [templateId, id],
+        //   address,
+        //   replyType,
+        //   comment,
+        //   "0x7465737400000000000000000000000000000000000000000000000000000000", // TODO: convert to bytes32
+        // ) //TODO: add uri
+        // console.log(ReplyPromptResponse)
 
           const promptRef = doc(firestore, 'prompt-metadata', templateId!)
           console.log('promptRef', promptRef)
+          console.log(address)
           getDoc(promptRef).then(snapshot => {
             const fetchedData = snapshot.data()?.[id!]
             if (fetchedData !== undefined) {
@@ -119,7 +120,7 @@ const NotReplied = () => {
               console.log(replyData)
               updateDoc(promptRef, {
                 [id!]: {
-                  ...fetchedData, //TODO: check 
+                  // ...fetchedData, //TODO: check 
                   keys: arrayUnion(address),
                   replies: {
                     ...fetchedData.replies,
@@ -135,7 +136,7 @@ const NotReplied = () => {
             const fetchedData = snapshot.data()?.connections
             if (fetchedData !== undefined) {
               updateDoc(templateRef, {
-                ...fetchedData, //TODO: Check
+                // ...fetchedData, //TODO: Check
                 connections: arrayUnion({
                   endorserAddress: address,
                   requesterAddress: requesterAddr,

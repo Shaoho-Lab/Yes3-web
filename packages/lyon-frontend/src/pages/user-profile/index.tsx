@@ -48,12 +48,12 @@ const UserProfilePage = () => {
           return
         }
         const LyonTemplateContract = new Contract(
-          '0x15f6682adC43ff249F645Cd6e121D2109632313e',
+          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
           LyonTemplate.abi,
           context.library.getSigner(context.account),
         )
         const LyonPromptContract = new Contract(
-          '0xb6Dd3FA5C9F212ca4a22635690DC1Cc1b8430388',
+          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
           LyonPrompt.abi,
           context.library.getSigner(context.account),
         )

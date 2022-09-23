@@ -116,12 +116,12 @@ const TemplateViewPage = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0xb6Dd3FA5C9F212ca4a22635690DC1Cc1b8430388',
+          '0xa10fefdB2BE52BBC287B57F08C2509EdD1a11AdE',
           LyonPrompt.abi,
           signer,
         )
         const LyonTemplateContract = new Contract(
-          '0x15f6682adC43ff249F645Cd6e121D2109632313e',
+          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
           LyonTemplate.abi,
           signer,
         )
@@ -167,9 +167,16 @@ const TemplateViewPage = () => {
             createTime: serverTimestamp(),
             SBTURI: '', // TODO add uri
           }
-          updateDoc(promptMetadataRef, {
-            [questionNumAnswers.toString()]: promptData,
-          })
+
+          if (snapshot.exists()) {
+            updateDoc(promptMetadataRef, {
+              [questionNumAnswers.toString()]: promptData,
+            })
+          } else {
+            setDoc(promptMetadataRef, {
+              [questionNumAnswers.toString()]: promptData,
+            })
+          }
         })
       }
     } catch (error: any) {
