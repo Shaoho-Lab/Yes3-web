@@ -39,7 +39,6 @@ const NotReplied = () => {
   const { data, error, signMessage } = useSignMessage({
     onSuccess(data, variables) {
       setSignatureHash(data)
-      console.log('signature', data)
       // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
     },
     onError(error) {
@@ -67,14 +66,7 @@ const NotReplied = () => {
     const name = userAddressNameMapping[address]
     return name ? name : address
   }
-
-  // TODO: ENS detect
-  // const providerETH = getDefaultProvider('homestead')
-  // providerETH.lookupAddress("0x5555763613a12D8F3e73be831DFf8598089d3dCa").then((name) => {
-  //   console.log("name", name)
-  // })
   
-
   useEffect(() => {
     const loadPromptData = async () => {
       const templateMetadataRef = doc(
