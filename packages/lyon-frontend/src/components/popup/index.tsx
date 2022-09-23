@@ -44,5 +44,6 @@ const PopupProps = ({
     </div>
   )
 }
+//export function confirmAlert(options: PopupProps): void
 
 export default PopupProps

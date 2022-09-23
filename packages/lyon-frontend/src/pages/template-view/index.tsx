@@ -60,10 +60,10 @@ const TemplateViewPage = () => {
     })
   }
 
-  const popup =() => {
-    render{
-      <PopupProps/>
-  }}
+  // const popup =() => {
+  //   render{
+  //     <PopupProps/>
+  // }}
 
   useEffect(() => {
     const loadTemplateData = async () => {

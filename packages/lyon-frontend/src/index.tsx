@@ -15,7 +15,7 @@ import './index.scss'
 import reportWebVitals from './reportWebVitals'
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from '@chakra-ui/react'
 
 const client = createClient(getDefaultClient({ appName: 'Lyon' }))
 
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
   {
     path: '/prompts/:templateId/:id/reply',
     element: <PromptReplierViewPage />,
-  }, // need to figure out how to generate the link for repliers
+  },
   { path: '/user/profile/:address', element: <UserProfilePage /> },
 ])
 

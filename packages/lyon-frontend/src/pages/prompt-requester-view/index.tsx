@@ -104,12 +104,12 @@ const Edit = () => {
         templateId!,
       )
       const templateSnapshot = await getDoc(templateMetadataRef)
-        const fetchedData = templateSnapshot.data()
-        if (fetchedData !== undefined) {
-          setQuestion(fetchedData.question)
-          setQuestionContext(fetchedData.context)
-          setQuestionNumAnswers(fetchedData.numAnswers)
-        }
+      const fetchedData = templateSnapshot.data()
+      if (fetchedData !== undefined) {
+        setQuestion(fetchedData.question)
+        setQuestionContext(fetchedData.context)
+        setQuestionNumAnswers(fetchedData.numAnswers)
+      }
     }
     getTempalteData()
   }, [])
