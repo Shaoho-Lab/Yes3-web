@@ -74,18 +74,18 @@ const UserProfilePage = () => {
           // Query all prompts
           const allPromptsQuery =
             await LyonPromptContract.queryAllPromptByAddress(address)
-          var allTemplatesQueryInQuestion: string[] = []
+          var allPromptQueryInQuestion: string[] = []
           allPromptsQuery.forEach((prompt: any) => {
             const templateId = parseInt(prompt.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
-            allTemplatesQueryInQuestion.push(templateQuestion)
+            allPromptQueryInQuestion.push(templateQuestion)
           })
 
-          setAllPrompts(allTemplatesQueryInQuestion)
+          setAllPrompts(allPromptQueryInQuestion)
 
           // Query all templates
           const allTemplatesQuery =
-            await LyonTemplateContract.queryAllPromptByAddress(address)
+            await LyonTemplateContract.queryAllTemplatesByAddress(address)
           var allTemplatesQueryInQuestion: string[] = []
           allTemplatesQuery.forEach((template: any) => {
             const templateId = parseInt(template.templateId._hex)
