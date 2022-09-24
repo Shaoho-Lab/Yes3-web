@@ -116,13 +116,13 @@ const NotReplied = () => {
           replyType,
           comment,
           signatureHash,
-        ) //TODO: add uri
+        )
         console.log(ReplyPromptResponse)
 
         const promptRef = doc(firestore, 'prompt-metadata', templateId!)
-        getDoc(promptRef).then(snapshot => {
-          const fetchedData = snapshot.data()?.[id!]
-          if (fetchedData !== undefined) {
+        const promptSnapshot = await getDoc(promptRef)
+          const promptFetchedData = promptSnapshot.data()?.[id!]
+          if (promptFetchedData !== undefined) {
             const replyData = {
               comment: comment,
               createTime: serverTimestamp(),
@@ -130,15 +130,15 @@ const NotReplied = () => {
               signature: signatureHash,
             }
 
-            const keysList = fetchedData.keys
+            const keysList = promptFetchedData.keys
             if (!keysList.includes(address)) {
               keysList.push(address)
             }
             const updateReplyData = {
-              ...fetchedData,
+              ...promptFetchedData,
               keys: keysList,
               replies: {
-                ...fetchedData.replies,
+                ...promptFetchedData.replies,
                 [address!]: replyData,
               },
             }
@@ -146,12 +146,11 @@ const NotReplied = () => {
               [id!]: updateReplyData,
             })
           }
-        })
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
-        getDoc(templateRef).then(snapshot => {
-          const fetchedData = snapshot.data()?.connections
-          if (fetchedData !== undefined) {
+        const templateSnapshot = await getDoc(templateRef)
+          const templateFetchedData = templateSnapshot.data()?.connections
+          if (templateFetchedData !== undefined) {
             updateDoc(templateRef, {
               connections: arrayUnion({
                 endorserAddress: address,
@@ -159,7 +158,6 @@ const NotReplied = () => {
               }),
             })
           }
-        })
       }
     } catch (error: any) {
       toast({

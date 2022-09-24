@@ -27,25 +27,34 @@ const PromptPublicViewPage = () => {
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
   const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
+  const [promptOwner, setPromptOwner] = useState('')
+  const [promptOwnerAddress, setPromptOwnerAddress] = useState('')
+  const [propmtTimeDiff, setPropmtTimeDiff] = useState("")
   const [buttonPopup, setButtonPopup] = useState(false)
   const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
+  const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
+  const [commentList, setCommentList] = useState<string[][]>()
+  const [chosenRepliesString, setChosenRepliesString] = useState<string>('')
   const handleClick = () => {
     if (mintConfirm != true) {
       setMintConfirm(current => !current)
     }
   }
   // const { library, account, chainId } = context
-  const { templateId } = useParams<{ templateId: string }>()
+  const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
   )
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
 
-  // need change after getting the real id!!!!
-  const id = '1'
   useEffect(() => {
+    const getName = (userAddressNameMapping: any, address: string) => {
+      const name = userAddressNameMapping[address]
+      return name ? name : address
+    }
+
     const loadTemplateData = async () => {
       const templateMetadataRef = doc(
         firestore,
@@ -59,11 +68,59 @@ const PromptPublicViewPage = () => {
         setQuestionContext(fetchedData.context)
         setQuestionNumAnswers(fetchedData.numAnswers)
       }
-    }
 
-    provider.getNetwork().then((network: any) => {
+      const network = await provider.getNetwork()
       setChainId(network.chainId)
-    })
+
+      const userRef = doc(firestore, 'user-metadata', 'info')
+      const userRefSnapshot = await getDoc(userRef)
+      const userAddressNameMapping = userRefSnapshot.data()
+      setUserAddressNameMapping(userAddressNameMapping)
+
+      const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
+      const promptSnapshot = await getDoc(promptMetadataRef)
+      const promptData = promptSnapshot.data()
+      if (promptData !== undefined) {
+        const promptOwnerAddress = promptData[id!].promptOwner
+        const promptOwnerName = getName(userAddressNameMapping, promptOwnerAddress)
+        const promptCreateTime = promptData[id!].createTime
+        setPromptOwnerAddress(promptOwnerAddress)
+        setPromptOwner(promptOwnerName)
+        const diff = Math.abs(Date.now() - promptCreateTime.toDate())
+        if (diff < (1000 * 60 * 60 * 24)) {
+          setPropmtTimeDiff("Today")
+        } 
+        else {
+          const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
+          setPropmtTimeDiff(diffDays + " days ago")
+        }
+
+        const replies = promptData[id!].replies
+        const chosenReplies = promptData[id!].chosenReplies
+        if (replies !== undefined) {
+          const commentListTemp: string[][] = []
+          for (let key of Object.keys(replies)) {
+            const name = getName(userAddressNameMapping, key)
+            const value = replies[key]
+            commentListTemp.push([key, name, value.comment])
+          }
+
+          setCommentList(commentListTemp)
+        }
+        if (chosenReplies !== undefined) {
+          let chosenRepliesTemp = ''
+          for (let key of Object.keys(chosenReplies)) {
+            const name = getName(userAddressNameMapping, key)
+            const value = chosenReplies[key]
+            chosenRepliesTemp = chosenRepliesTemp.concat(
+              name + ': ' + value.replierDetail + ';',
+            )
+          }
+
+          setChosenRepliesString(chosenRepliesTemp)
+        }
+      }
+    }
 
     loadTemplateData()
   }, [])
@@ -118,48 +175,47 @@ const PromptPublicViewPage = () => {
         const questionNumAnswersAdded = questionNumAnswers + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
-        getDoc(templateRef).then(snapshot => {
-          const fetchedData = snapshot.data()?.trend
-          const currentYear = new Date().getFullYear()
-          const currentMonth = new Date().getMonth() + 1
-          const currentTime = [currentYear, currentMonth].join('-')
-          if (fetchedData !== undefined) {
-            updateDoc(templateRef, {
-              trend: {
-                [currentTime]:
-                  fetchedData[currentTime] !== undefined
-                    ? fetchedData[currentTime] + 1
-                    : 1,
-              },
-              numAnswers: questionNumAnswersAdded,
-            })
-            // setQuestionNumAnswers(questionNumAnswers + 1)
-            handleClick()
-          }
-        })
+        const templateSnapshot = await getDoc(templateRef)
+        const fetchedData = templateSnapshot.data()?.trend
+        const currentYear = new Date().getFullYear()
+        const currentMonth = new Date().getMonth() + 1
+        const currentTime = [currentYear, currentMonth].join('-')
+        if (fetchedData !== undefined) {
+          updateDoc(templateRef, {
+            trend: {
+              [currentTime]:
+                fetchedData[currentTime] !== undefined
+                  ? fetchedData[currentTime] + 1
+                  : 1,
+            },
+            numAnswers: questionNumAnswersAdded,
+          })
+          // setQuestionNumAnswers(questionNumAnswers + 1)
+          handleClick()
+        }
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-        getDoc(promptMetadataRef).then(snapshot => {
-          const promptData = {
-            promptOwner: address,
-            question: question,
-            context: questionContext,
-            replies: {},
-            keys: [],
-            createTime: serverTimestamp(),
-            SBTURI: '', // TODO add uri
-          }
+        const promptSnapshot = await getDoc(promptMetadataRef)
+        const promptData = {
+          promptOwner: address,
+          question: question,
+          context: questionContext,
+          replies: {},
+          chosenReplies: {},
+          keys: [],
+          createTime: serverTimestamp(),
+          SBTURI: '', // TODO add uri
+        }
 
-          if (snapshot.exists()) {
-            updateDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          } else {
-            setDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          }
-        })
+        if (promptSnapshot.exists()) {
+          updateDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        } else {
+          setDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        }
       }
     } catch (error: any) {
       toast({
@@ -190,43 +246,37 @@ const PromptPublicViewPage = () => {
 
     loadTemplateData()
   }, [])
-  //const [templateId, setTemplateId] = useState('1')
-  const checkList = [
-    ['onjas.eth', 'A piece of shit!'],
-    ['vitalik.eth', 'Shittest ever!'],
-    ['yan.eth', 'Go shit!'],
-    ['onjas.eth', 'A piece of shit!'],
-  ]
-  const checkedItems = 'onjas.eth: A pice of shit!; vitalik.eth: Shittest ever!'
 
   //need to figure out if the SBT owner info is queryable
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.heading}>{question}</div>
+      <div className={styles.heading}>{questionContext}</div>
+      <div className={styles.heading}>Asked {questionNumAnswers} times</div>
       <div className={styles.intro}>
         By{' '}
-        <a href="https://etherscan.io/address/0xd8da6bf26964af9d7eed9e03e53415d37aa96045">
-          yanffyy.eth
+        <a href={`https://etherscan.io/address/${promptOwnerAddress}`}>
+          {promptOwner}
         </a>{' '}
-        3 days ago
+        {propmtTimeDiff}
       </div>
       <div className={styles.content}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={checkedItems} />
+            <NFTSBTBox question={question} replyShow={chosenRepliesString} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>Comments</div>
             <div className="checkList">
               <div className="list-container">
-                {checkList.map((item, index) => (
+                {commentList?.map((item, index) => (
                   <div key={index}>
                     <Card className={styles.comment}>
-                      <a href="https://etherscan.io/address/0xd8da6bf26964af9d7eed9e03e53415d37aa96045">
-                        {item[0]}
+                      <a href={`https://etherscan.io/address/${item[0]}`}>
+                        {item[1]}
                       </a>
                       :&nbsp;
-                      <text>{item[1]}</text>
+                      {item[2]}
                     </Card>
                   </div>
                 ))}

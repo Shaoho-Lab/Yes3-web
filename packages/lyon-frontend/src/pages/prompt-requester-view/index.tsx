@@ -72,22 +72,33 @@ const dataURLtoFile = (dataUrl: string, filename: string) => {
 }
 
 const Edit = () => {
-  const toast = useToast()
-  const [comment, setComment] = useState('')
-  // need to change to query
-  const checkList = [
-    ['onjas.eth', 'A piece of shit!'],
-    ['vitalik.eth', 'Shittest ever!'],
-    ['yan.eth', 'Go shit!'],
-    ['onjas.eth', 'A piece of shit!'],
-  ]
-  const selected = [
-    ['onjas.eth', 'A piece of shit!'],
-    ['vitalik.eth', 'Shittest ever!'],
-    ['yan.eth', 'Go shit!'],
-  ]
+  const [question, setQuestion] = useState('')
+  const [questionContext, setQuestionContext] = useState('')
+  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
+  const [buttonPopup, setButtonPopup] = useState(false)
+  const [mintConfirm, setMintConfirm] = useState(false)
+  const [chainId, setChainId] = useState(80001)
   const [checked, setChecked] = useState<string[]>([])
+  const [commentList, setCommentList] = useState<string[][]>()
+  const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
+  const [comment, setComment] = useState('')
+
+  const { data: signer, isError, isLoading } = useSigner()
+  const { address, isConnecting, isDisconnected } = useAccount()
+  const toast = useToast()
+
+  const { templateId, id } = useParams<{ templateId: string; id: string }>()
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
+  )
   // Add/Remove checked item from list
+  const handleClick = () => {
+    if (mintConfirm != true) {
+      setMintConfirm(current => !current)
+    }
+  }
+  // const { library, account, chainId } = context
+
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     var updatedList: string[] = [...checked]
     if (event.target.checked) {
@@ -105,50 +116,6 @@ const Edit = () => {
         return total + '; ' + item
       })
     : ''
-
-  const [question, setQuestion] = useState('')
-  const [questionContext, setQuestionContext] = useState('')
-  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
-  const [buttonPopup, setButtonPopup] = useState(false)
-  const [mintConfirm, setMintConfirm] = useState(false)
-  const [chainId, setChainId] = useState(80001)
-  const handleClick = () => {
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-  }
-  // const { library, account, chainId } = context
-  const { templateId } = useParams<{ templateId: string }>()
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
-  )
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
-
-  // need change after getting the real id!!!!
-  const id = '1'
-  useEffect(() => {
-    const loadTemplateData = async () => {
-      const templateMetadataRef = doc(
-        firestore,
-        'template-metadata',
-        templateId!,
-      )
-      const templateSnapshot = await getDoc(templateMetadataRef)
-      const fetchedData = templateSnapshot.data()
-      if (fetchedData !== undefined) {
-        setQuestion(fetchedData.question)
-        setQuestionContext(fetchedData.context)
-        setQuestionNumAnswers(fetchedData.numAnswers)
-      }
-    }
-
-    provider.getNetwork().then((network: any) => {
-      setChainId(network.chainId)
-    })
-
-    loadTemplateData()
-  }, [])
 
   const handleSwitchNetwork = async (networkId: number) => {
     try {
@@ -200,48 +167,47 @@ const Edit = () => {
         const questionNumAnswersAdded = questionNumAnswers + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
-        getDoc(templateRef).then(snapshot => {
-          const fetchedData = snapshot.data()?.trend
-          const currentYear = new Date().getFullYear()
-          const currentMonth = new Date().getMonth() + 1
-          const currentTime = [currentYear, currentMonth].join('-')
-          if (fetchedData !== undefined) {
-            updateDoc(templateRef, {
-              trend: {
-                [currentTime]:
-                  fetchedData[currentTime] !== undefined
-                    ? fetchedData[currentTime] + 1
-                    : 1,
-              },
-              numAnswers: questionNumAnswersAdded,
-            })
-            // setQuestionNumAnswers(questionNumAnswers + 1)
-            handleClick()
-          }
-        })
+        const templateSnapshot = await getDoc(templateRef)
+        const fetchedData = templateSnapshot.data()?.trend
+        const currentYear = new Date().getFullYear()
+        const currentMonth = new Date().getMonth() + 1
+        const currentTime = [currentYear, currentMonth].join('-')
+        if (fetchedData !== undefined) {
+          updateDoc(templateRef, {
+            trend: {
+              [currentTime]:
+                fetchedData[currentTime] !== undefined
+                  ? fetchedData[currentTime] + 1
+                  : 1,
+            },
+            numAnswers: questionNumAnswersAdded,
+          })
+          // setQuestionNumAnswers(questionNumAnswers + 1)
+          handleClick()
+        }
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-        getDoc(promptMetadataRef).then(snapshot => {
-          const promptData = {
-            promptOwner: address,
-            question: question,
-            context: questionContext,
-            replies: {},
-            keys: [],
-            createTime: serverTimestamp(),
-            SBTURI: '', // TODO add uri
-          }
+        const promptSnapshot = await getDoc(promptMetadataRef)
+        const promptData = {
+          promptOwner: address,
+          question: question,
+          context: questionContext,
+          replies: {},
+          chosenReplies: {},
+          keys: [],
+          createTime: serverTimestamp(),
+          SBTURI: '', // TODO add uri
+        }
 
-          if (snapshot.exists()) {
-            updateDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          } else {
-            setDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          }
-        })
+        if (promptSnapshot.exists()) {
+          updateDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        } else {
+          setDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        }
       }
     } catch (error: any) {
       toast({
@@ -253,6 +219,53 @@ const Edit = () => {
       })
     }
   }
+
+  useEffect(() => {
+    const loadTemplateData = async () => {
+      const getName = (userAddressNameMapping: any, address: string) => {
+        const name = userAddressNameMapping[address]
+        return name ? name : address
+      }
+      const templateMetadataRef = doc(
+        firestore,
+        'template-metadata',
+        templateId!,
+      )
+      const templateSnapshot = await getDoc(templateMetadataRef)
+      const fetchedData = templateSnapshot.data()
+      if (fetchedData !== undefined) {
+        setQuestion(fetchedData.question)
+        setQuestionContext(fetchedData.context)
+        setQuestionNumAnswers(fetchedData.numAnswers)
+      }
+
+      const network = await provider.getNetwork()
+      setChainId(network.chainId)
+      const userRef = doc(firestore, 'user-metadata', 'info')
+      const userRefSnapshot = await getDoc(userRef)
+      const userAddressNameMapping = userRefSnapshot.data()
+      setUserAddressNameMapping(userAddressNameMapping)
+
+      const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
+      const promptSnapshot = await getDoc(promptMetadataRef)
+      const promptData = promptSnapshot.data()
+      if (promptData !== undefined) {
+        const replies = promptData[id!].replies
+        if (replies !== undefined) {
+          const commentListTemp: string[][] = []
+          for (let key of Object.keys(replies)) {
+            const name = getName(userAddressNameMapping, key)
+            const value = replies[key]
+            commentListTemp.push([key, name, value.comment])
+          }
+
+          setCommentList(commentListTemp)
+        }
+      }
+    }
+
+    loadTemplateData()
+  }, [])
 
   return (
     <CommonLayout className={styles.page}>
@@ -271,7 +284,7 @@ const Edit = () => {
             <h5>Max 4</h5>
             <div className="checkList">
               <div className="list-container">
-                {checkList.map((item, index) => (
+                {commentList?.map((item, index) => (
                   <div key={index}>
                     <Card className={styles.comment}>
                       <input

@@ -23,13 +23,12 @@ const AppPage = () => {
         userAddressNameMapping[address] === undefined
       ) {
         const providerETH = getDefaultProvider('homestead')
-        providerETH.lookupAddress(address).then(ENSName => {
-          if (ENSName !== null) {
-            updateDoc(userRef, {
-              [address]: ENSName,
-            })
-          }
-        })
+        const ENSName = await providerETH.lookupAddress(address)
+        if (ENSName !== null) {
+          updateDoc(userRef, {
+            [address]: ENSName,
+          })
+        }
       }
     }
 

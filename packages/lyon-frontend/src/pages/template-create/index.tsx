@@ -1,5 +1,4 @@
 import { useToast } from '@chakra-ui/react'
-import Checkbox from 'components/checkbox'
 import CommonLayout from 'components/common-layout'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -14,8 +13,6 @@ import {
   updateDoc,
   setDoc,
   serverTimestamp,
-  collection,
-  databaseGet,
 } from '../../firebase'
 import { useNavigate } from 'react-router-dom'
 import Popup from 'components/popup'
@@ -24,23 +21,24 @@ import NFTSBTMintBox from 'components/NFTSBTMintBox'
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
   const [templateContext, setTemplateContext] = useState('')
-  // const [templateId, setTemplateId] = useState(0)
+  const [templateId, setTemplateId] = useState('0')
   const [buttonPopup, setButtonPopup] = useState(false)
   const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
+
   const navigate = useNavigate()
   const toast = useToast()
-  const handleClick = () => {
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-  }
-
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
   )
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
+
+  const handleClick = () => {
+    if (mintConfirm != true) {
+      setMintConfirm(current => !current)
+    }
+  }
 
   useEffect(() => {
     provider.getNetwork().then((network: any) => {
@@ -69,9 +67,6 @@ const TemplateCreatePage = () => {
     }
   }
 
-  // need to change after we can get tempalteId from mint
-  const templateId = '1'
-
   const handleMintTemplate = async () => {
     try {
       if (provider && signer && chainId) {
@@ -80,7 +75,7 @@ const TemplateCreatePage = () => {
           return
         }
         const LyonTemplateContract = new Contract(
-          '0x15f6682adC43ff249F645Cd6e121D2109632313e',
+          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
           LyonTemplate.abi,
           signer,
         )
@@ -88,8 +83,8 @@ const TemplateCreatePage = () => {
           templateQuestion,
           templateContext,
           '',
-        ) //TODO: add uri
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash // TODO store hash
+        ) //TODO: add template uri
+        const promptSafeMintResponseHash = promptSafeMintResponse.hash 
         console.log('promptSafeMintResponse', promptSafeMintResponse)
 
         const templateMetadataRef = doc(
@@ -100,26 +95,28 @@ const TemplateCreatePage = () => {
         const templateMetadataSnapshot = await getDoc(templateMetadataRef)
         const fetchedData = templateMetadataSnapshot.data()
         const templateCount = fetchedData?.count + 1
-        updateDoc(templateMetadataRef, {
+        setTemplateId(templateCount.toString())
+        await updateDoc(templateMetadataRef, {
           count: templateCount,
-        }).then(() => {
-          const templateRef = doc(
-            firestore,
-            'template-metadata',
-            templateCount!.toString(),
-          )
-          setDoc(templateRef, {
-            question: templateQuestion,
-            context: templateContext,
-            ownerAddress: address,
-            numAnswers: 0,
-            trend: {},
-            connections: [],
-            createTime: serverTimestamp(),
-            templateURI: '',
-          })
-          navigate(`/app`)
         })
+
+        const templateRef = doc(
+          firestore,
+          'template-metadata',
+          templateCount!.toString(),
+        )
+        setDoc(templateRef, {
+          question: templateQuestion,
+          context: templateContext,
+          ownerAddress: address,
+          numAnswers: 0,
+          trend: {},
+          connections: [],
+          createTime: serverTimestamp(),
+          templateURI: '', //TODO: add template uri
+        })
+
+        // navigate(`/app`)
       }
     } catch (error: any) {
       toast({
@@ -130,6 +127,7 @@ const TemplateCreatePage = () => {
         isClosable: true,
       })
     }
+    
     handleClick()
   }
 

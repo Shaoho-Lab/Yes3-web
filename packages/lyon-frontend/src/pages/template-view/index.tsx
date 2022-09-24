@@ -81,11 +81,10 @@ const TemplateViewPage = () => {
         setQuestionContext(fetchedData.context)
         setQuestionNumAnswers(fetchedData.numAnswers)
       }
-    }
 
-    provider.getNetwork().then((network: any) => {
+      const network = await provider.getNetwork()
       setChainId(network.chainId)
-    })
+    }
 
     loadTemplateData()
   }, [])
@@ -110,9 +109,6 @@ const TemplateViewPage = () => {
       })
     }
   }
-
-  // need change after getting the real id!!!!
-  const id = '1'
 
   const handleMintPrompt = async () => {
     try {
@@ -144,52 +140,51 @@ const TemplateViewPage = () => {
         console.log('promptSafeMintResponse', promptSafeMintResponse)
 
         const templateNewPrompMinted =
-          await LyonTemplateContract.newPrompMinted(templateId) 
+          await LyonTemplateContract.newPrompMinted(templateId)
         console.log('templateNewPrompMinted', templateNewPrompMinted)
 
         const questionNumAnswersAdded = questionNumAnswers + 1
-
+        setQuestionNumAnswers(questionNumAnswersAdded)
         const templateRef = doc(firestore, 'template-metadata', templateId!)
-        getDoc(templateRef).then(snapshot => {
-          const fetchedData = snapshot.data()?.trend
-          const currentYear = new Date().getFullYear()
-          const currentMonth = new Date().getMonth() + 1
-          const currentTime = [currentYear, currentMonth].join('-')
-          if (fetchedData !== undefined) {
-            updateDoc(templateRef, {
-              trend: {
-                [currentTime]:
-                  fetchedData[currentTime] !== undefined
-                    ? fetchedData[currentTime] + 1
-                    : 1,
-              },
-              numAnswers: questionNumAnswersAdded,
-            })
-          }
-        })
+        const templateSnapshot = await getDoc(templateRef)
+        const fetchedData = templateSnapshot.data()?.trend
+        const currentYear = new Date().getFullYear()
+        const currentMonth = new Date().getMonth() + 1
+        const currentTime = [currentYear, currentMonth].join('-')
+        if (fetchedData !== undefined) {
+          updateDoc(templateRef, {
+            trend: {
+              [currentTime]:
+                fetchedData[currentTime] !== undefined
+                  ? fetchedData[currentTime] + 1
+                  : 1,
+            },
+            numAnswers: questionNumAnswersAdded,
+          })
+        }
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
-        getDoc(promptMetadataRef).then(snapshot => {
-          const promptData = {
-            promptOwner: address,
-            question: question,
-            context: questionContext,
-            replies: {},
-            keys: [],
-            createTime: serverTimestamp(),
-            SBTURI: '', // TODO add uri
-          }
+        const promptSnapshot = await getDoc(promptMetadataRef)
+        const promptData = {
+          promptOwner: address,
+          question: question,
+          context: questionContext,
+          replies: {},
+          chosenReplies: {},
+          keys: [],
+          createTime: serverTimestamp(),
+          SBTURI: '', // TODO add SBT uri
+        }
 
-          if (snapshot.exists()) {
-            updateDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          } else {
-            setDoc(promptMetadataRef, {
-              [questionNumAnswersAdded.toString()]: promptData,
-            })
-          }
-        })
+        if (promptSnapshot.exists()) {
+          updateDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        } else {
+          setDoc(promptMetadataRef, {
+            [questionNumAnswersAdded.toString()]: promptData,
+          })
+        }
       }
     } catch (error: any) {
       toast({
@@ -200,6 +195,7 @@ const TemplateViewPage = () => {
         isClosable: true,
       })
     }
+
     handleClick()
   }
 
@@ -251,7 +247,8 @@ const TemplateViewPage = () => {
                   <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
                     Share this link to your friends for reply：
                     <a href="abc.com">
-                      https://lyonprotocol.xyz/prompts/{templateId}/{id}
+                      https://lyonprotocol.xyz/prompts/{templateId}/
+                      {questionNumAnswers}
                     </a>
                   </h1>
                 </div>
