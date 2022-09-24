@@ -26,16 +26,16 @@ const PromptPublicViewPage = () => {
   const toast = useToast()
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
+  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
   const [promptOwner, setPromptOwner] = useState('')
   const [promptOwnerAddress, setPromptOwnerAddress] = useState('')
-  const [propmtTimeDiff, setPropmtTimeDiff] = useState('')
+  const [propmtTimeDiff, setPropmtTimeDiff] = useState("")
   const [buttonPopup, setButtonPopup] = useState(false)
   const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
   const [commentList, setCommentList] = useState<string[][]>()
-  const [chosenReplies, setChosenReplies] = useState<string[]>([])
-  const [numAnswers, setNumAnswers] = useState(0)
+  const [chosenRepliesList, setChosenRepliesList] = useState<string[]>()
   const handleClick = () => {
     if (mintConfirm != true) {
       setMintConfirm(current => !current)
@@ -66,6 +66,7 @@ const PromptPublicViewPage = () => {
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
+        setQuestionNumAnswers(fetchedData.numAnswers)
       }
 
       const network = await provider.getNetwork()
@@ -81,24 +82,21 @@ const PromptPublicViewPage = () => {
       const promptData = promptSnapshot.data()
       if (promptData !== undefined) {
         const promptOwnerAddress = promptData[id!].promptOwner
-        const promptOwnerName = getName(
-          userAddressNameMapping,
-          promptOwnerAddress,
-        )
+        const promptOwnerName = getName(userAddressNameMapping, promptOwnerAddress)
         const promptCreateTime = promptData[id!].createTime
         setPromptOwnerAddress(promptOwnerAddress)
         setPromptOwner(promptOwnerName)
         const diff = Math.abs(Date.now() - promptCreateTime.toDate())
-        if (diff < 1000 * 60 * 60 * 24) {
-          setPropmtTimeDiff('Today')
-        } else {
+        if (diff < (1000 * 60 * 60 * 24)) {
+          setPropmtTimeDiff("Today")
+        } 
+        else {
           const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
-          setPropmtTimeDiff(diffDays + ' days ago')
+          setPropmtTimeDiff(diffDays + " days ago")
         }
 
         const replies = promptData[id!].replies
         const chosenReplies = promptData[id!].chosenReplies
-
         if (replies !== undefined) {
           const commentListTemp: string[][] = []
           for (let key of Object.keys(replies)) {
@@ -110,16 +108,13 @@ const PromptPublicViewPage = () => {
           setCommentList(commentListTemp)
         }
         if (chosenReplies !== undefined) {
-          let chosenRepliesTemp: string[] = []
+          let chosenRepliesTemp:string[] = []
           for (let key of Object.keys(chosenReplies)) {
             const name = getName(userAddressNameMapping, key)
             const value = chosenReplies[key]
-            chosenRepliesTemp = [...chosenRepliesTemp, value.replierDetail]
-            console.log(value.replierDetail)
+            chosenRepliesTemp.push(value.replierDetail)
           }
-          console.log(chosenReplies)
-          console.log(chosenRepliesTemp)
-          setChosenReplies(chosenRepliesTemp)
+          setChosenRepliesList(chosenRepliesTemp)
         }
       }
     }
@@ -174,7 +169,7 @@ const PromptPublicViewPage = () => {
         ) //TODO: add uri
         const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
-        const questionNumAnswersAdded = id! + 1
+        const questionNumAnswersAdded = questionNumAnswers + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         const templateSnapshot = await getDoc(templateRef)
@@ -191,7 +186,6 @@ const PromptPublicViewPage = () => {
                   : 1,
             },
             numAnswers: questionNumAnswersAdded,
-            //setNumAnswers(numAnswers)
           })
           // setQuestionNumAnswers(questionNumAnswers + 1)
           handleClick()
@@ -212,11 +206,11 @@ const PromptPublicViewPage = () => {
 
         if (promptSnapshot.exists()) {
           updateDoc(promptMetadataRef, {
-            [id!]: promptData,
+            [questionNumAnswersAdded]: promptData,
           })
         } else {
           setDoc(promptMetadataRef, {
-            [id!]: promptData,
+            [questionNumAnswersAdded]: promptData,
           })
         }
       }
@@ -230,24 +224,6 @@ const PromptPublicViewPage = () => {
       })
     }
   }
-
-  useEffect(() => {
-    const loadTemplateData = async () => {
-      const templateMetadataRef = doc(
-        firestore,
-        'template-metadata',
-        templateId!,
-      )
-      const templateSnapshot = await getDoc(templateMetadataRef)
-      const fetchedData = templateSnapshot.data()
-      if (fetchedData !== undefined) {
-        setQuestion(fetchedData.question)
-        setQuestionContext(fetchedData.context)
-      }
-    }
-
-    loadTemplateData()
-  }, [])
 
   //need to figure out if the SBT owner info is queryable
   return (
@@ -265,7 +241,7 @@ const PromptPublicViewPage = () => {
       <div className={styles.content}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={chosenReplies} />
+            <NFTSBTBox question={question} replyShow={chosenRepliesList!} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>Comments</div>
@@ -298,8 +274,7 @@ const PromptPublicViewPage = () => {
             Ask the question
           </div>
           <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-            <NFTSBTMintBox question={question} replyShow={''} />
-            <br />
+            <NFTSBTMintBox question={question} replyShow={"chosenRepliesList"} />
             <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
               Preview your SBT, then click the button to mint your SBT!
             </h1>
@@ -315,7 +290,7 @@ const PromptPublicViewPage = () => {
                   </h1>
                   <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
                     Share this link to your friends for reply：
-                    <a href={'/' + templateId + '/' + { id }}>
+                    <a href="abc.com">
                       https://lyonprotocol.xyz/prompts/{templateId}/{id}
                     </a>
                   </h1>

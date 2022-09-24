@@ -10,14 +10,15 @@ import LyonPrompt from 'contracts/LyonPrompt.json'
 import { useWeb3React } from '@web3-react/core'
 import { useSigner, useAccount, useSignMessage } from 'wagmi'
 import { ethers } from 'ethers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { firestore, doc, getDoc } from '../../firebase'
 
 const UserProfilePage = () => {
-  const toast = useToast()
-  const context = useWeb3React()
-  //const [allPrompts, setAllPrompts] = useState<number[][]>()
-  //const [allTemplates, setAllTemplates] = useState<number[][]>()
-  //const [allReplies, setAllReplies] = useState<number[][]>()
+  const [ENSName, setENSName] = useState('')
+  const [templateQuestionMapping, setTemplateQuestionMapping] = useState()
+  const [allPrompts, setAllPrompts] = useState<string[]>()
+  const [allTemplates, setAllTemplates] = useState<string[]>()
+  const [allReplies, setAllReplies] = useState<string[]>()
 
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
@@ -27,6 +28,122 @@ const UserProfilePage = () => {
   const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
+  const toast = useToast()
+  const context = useWeb3React()
+
+  useEffect(() => {
+    const getName = (userAddressNameMapping: any, address: string) => {
+      const name = userAddressNameMapping[address]
+      return name ? name : "ENS Name doesn't exist" //TODO: can be input by user
+    }
+    const loadData = async () => {
+      const userRef = doc(firestore, 'user-metadata', 'info')
+      const userRefSnapshot = await getDoc(userRef)
+      const userAddressNameMapping = userRefSnapshot.data()
+      const name = getName(userAddressNameMapping, address!)
+      setENSName(name)
+
+      const templateRef = doc(firestore, 'template-metadata', 'global')
+      const templateSnapshot = await getDoc(templateRef)
+      const count = templateSnapshot.data()?.count
+      var templateQuestionMappingTemp: any = {}
+      if (count !== undefined) {
+        for (let i = 1; i <= count; i++) {
+          const templateRef = doc(firestore, 'template-metadata', i.toString())
+          const templateSnapshot = await getDoc(templateRef)
+          const templateData = templateSnapshot.data()
+          if (templateData !== undefined) {
+            const templateQuestion = templateData.question
+            templateQuestionMappingTemp[i] = templateQuestion
+          }
+        }
+      }
+      setTemplateQuestionMapping(templateQuestionMappingTemp)
+      try {
+        if (signerAdmin) {
+          const LyonPromptContract = new Contract(
+            '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+            LyonPrompt.abi,
+            signerAdmin,
+          )
+          const LyonTemplateContract = new Contract(
+            '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
+            LyonTemplate.abi,
+            signerAdmin,
+          )
+
+          const allPromptsQuery =
+            await LyonPromptContract.queryAllPromptByAddress(address)
+          console.log("allPromptsQuery", allPromptsQuery)
+
+          //TODO: debug why there is error when using this
+          var allTemplatesQueryInQuestion: string[] = []
+          for (let i = 0; i < allPromptsQuery.length; i++) {
+            const templateId = Number(allPromptsQuery[i].templateId._hex)
+            const id = Number(allPromptsQuery[i].id._hex)
+            // allTemplatesQueryTemp.push([templateId, id])
+            const templateQuestion = templateQuestionMapping![templateId]
+            console.log(templateQuestion)
+            allTemplatesQueryInQuestion.push(templateQuestion)
+          }
+          
+          setAllPrompts(allTemplatesQueryInQuestion)
+
+          // fix contract bug
+          // const allTemplatesQuery = await LyonTemplateContract.queryAllPromptByAddress(
+          //   address,
+          // )
+          // console.log(allTemplatesQuery)
+          // var allTemplatesQueryTemp: number[] = []
+          // var allTemplatesQueryInQuestion: string[] = []
+          // for (let i = 0; i < allTemplatesQuery.length; i++) {
+          //   const templateId = Number(allTemplatesQuery[i].templateId._hex)
+          //   const id = Number(allTemplatesQuery[i].id._hex)
+          //   // allTemplatesQueryTemp.push([templateId, id])
+          //   allTemplatesQueryTemp.push(templateId)
+          // }
+          // console.log(allTemplatesQueryTemp)
+
+          // // TODO debug, the following function does not work
+          // allTemplatesQueryTemp.forEach((templateId) => {
+          //   allTemplatesQueryInQuestion.push(
+          //     templateQuestionMapping![templateId.toString()],
+          //   )
+          // })
+          // setAllTemplates(allTemplatesQueryInQuestion)
+
+          //TODO fix contract bug
+          // const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
+          //   address,
+          // )
+          // var allRepliesTemp: number[] = []
+          // var allRepliesInQuestion: string[] = []
+          // for (let i = 0; i < allReplies.length; i++) {
+          //   const templateId = allReplies[i].templateId._hex
+          //   const id = allReplies[i].id._hex
+          //   allRepliesTemp.push(templateId)
+          // }
+          // allRepliesTemp.forEach((templateId) => {
+          //   allRepliesInQuestion.push(
+          //     templateQuestionMapping![templateId.toString()],
+          //   )
+          // })
+          // setAllReplies(allRepliesInQuestion)
+        }
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: 'Request failed',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        })
+      }
+    }
+
+    loadData()
+  }, [])
+
   const handleSwitchNetwork = async (networkId: number) => {
     try {
       if ((window as any).web3?.currentProvider) {
@@ -48,56 +165,14 @@ const UserProfilePage = () => {
     }
   }
 
-  const queryAll = async () => {
-    try {
-      if (signer) {
-        const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
-          LyonPrompt.abi,
-          signerAdmin,
-        )
-        const LyonTemplateContract = new Contract(
-          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
-          LyonTemplate.abi,
-          signerAdmin,
-        )
-
-        // const allPrompts = await LyonPromptContract.queryAllPromptByAddress(
-        //   address,
-        // )
-        // setAllPrompts(allPrompts)
-        // console.log(allPrompts)
-        // const allTemplates = await LyonTemplateContract.queryAllPromptByAddress(
-        //   address,
-        // )
-        // setAllTemplates(allTemplates)
-        // console.log(allTemplates)
-        // const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
-        //   address,
-        // )
-        // console.log(allReplies)
-        // setAllReplies(allReplies)
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: 'Reply failed',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }
-  queryAll()
-
   if (!address) {
     redirect('/')
     return null
   }
 
-  const allPrompts = ['a', 'b', 'c']
-  const allTemplates = ['a', 'b', 'c']
-  const allReplies = ['a', 'b', 'c']
+  // const allPrompts = ['a', 'b', 'c']
+  // const allTemplates = ['a', 'b', 'c']
+  // const allReplies = ['a', 'b', 'c']
 
   return (
     <CommonLayout className={styles.page}>
@@ -109,7 +184,7 @@ const UserProfilePage = () => {
           alt={address}
         />
         <div className={styles.identity}>
-          <div className={styles.name}>Query ENS</div>
+          <div className={styles.name}>{ENSName}</div>
           <div className={styles.address}>{address}</div>
         </div>
       </Card>
