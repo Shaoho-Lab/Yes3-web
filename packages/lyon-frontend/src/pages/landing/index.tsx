@@ -35,7 +35,6 @@ const LandingPage = () => {
             <br />
             <br />
             Describe it and ask for endorsement!
-            <br />
           </div>
         </Card>
         <Card className={styles.card}>
