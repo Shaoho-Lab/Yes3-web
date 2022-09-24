@@ -115,7 +115,7 @@ const NotReplied = () => {
         signMessage({ message })
 
         const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+          '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signerAdmin,
         )

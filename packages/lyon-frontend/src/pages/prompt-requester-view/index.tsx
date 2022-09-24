@@ -161,7 +161,7 @@ const Edit = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+          '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signer,
         )
@@ -233,7 +233,7 @@ const Edit = () => {
           for (let key of Object.keys(replies)) {
             const name = getName(userAddressNameMapping, key)
             const value = replies[key]
-            commentListTemp.push([name, value.comment])
+            commentListTemp.push([key, name, value.comment])
           }
 
           setCommentList(commentListTemp)
@@ -252,7 +252,7 @@ const Edit = () => {
       <div className={styles.container}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={['asdasd']} />
+            <NFTSBTBox question={question} replyShow={["asdasd"]} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>
@@ -265,7 +265,7 @@ const Edit = () => {
                   <div key={index}>
                     <Card className={styles.comment}>
                       <input
-                        value={item[0]}
+                        value={item}
                         type="checkbox"
                         onChange={handleCheck}
                       />

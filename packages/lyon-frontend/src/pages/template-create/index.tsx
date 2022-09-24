@@ -75,7 +75,7 @@ const TemplateCreatePage = () => {
           return
         }
         const LyonTemplateContract = new Contract(
-          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
+          '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
           LyonTemplate.abi,
           signer,
         )
