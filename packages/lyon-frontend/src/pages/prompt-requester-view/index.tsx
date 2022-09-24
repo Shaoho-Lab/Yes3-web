@@ -150,64 +150,27 @@ const Edit = () => {
           LyonPrompt.abi,
           signer,
         )
-        const LyonTemplateContract = new Contract(
-          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
-          LyonTemplate.abi,
-          signer,
-        )
-        const promptSafeMintResponse = await LyonPromptContract.safeMint(
-          templateId,
-          question,
-          questionContext,
-          address,
-          '',
-        ) //TODO: add uri
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash
-        console.log('promptSafeMintResponse', promptSafeMintResponse)
-        const questionNumAnswersAdded = questionNumAnswers + 1
 
-        const templateRef = doc(firestore, 'template-metadata', templateId!)
-        const templateSnapshot = await getDoc(templateRef)
-        const fetchedData = templateSnapshot.data()?.trend
-        const currentYear = new Date().getFullYear()
-        const currentMonth = new Date().getMonth() + 1
-        const currentTime = [currentYear, currentMonth].join('-')
-        if (fetchedData !== undefined) {
-          updateDoc(templateRef, {
-            trend: {
-              [currentTime]:
-                fetchedData[currentTime] !== undefined
-                  ? fetchedData[currentTime] + 1
-                  : 1,
-            },
-            numAnswers: questionNumAnswersAdded,
-          })
-          // setQuestionNumAnswers(questionNumAnswers + 1)
-          handleClick()
-        }
+        const setTokenURIResponse = await LyonPromptContract.setTokenURI(
+          [templateId, id],
+          '', // TODO add updated TokenURI
+        )
+        console.log('setTokenURIResponse', setTokenURIResponse)
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
         const promptSnapshot = await getDoc(promptMetadataRef)
-        const promptData = {
-          promptOwner: address,
-          question: question,
-          context: questionContext,
-          replies: {},
-          chosenReplies: {},
-          keys: [],
-          createTime: serverTimestamp(),
-          SBTURI: '', // TODO add uri
-        }
 
         if (promptSnapshot.exists()) {
+          const promptData = {
+            chosenReplies: {}, // TODO add checked Data
+            ...promptSnapshot.data()[id!],
+          }
           updateDoc(promptMetadataRef, {
-            [questionNumAnswersAdded.toString()]: promptData,
-          })
-        } else {
-          setDoc(promptMetadataRef, {
-            [questionNumAnswersAdded.toString()]: promptData,
+            [id!]: promptData,
           })
         }
+
+        handleClick()
       }
     } catch (error: any) {
       toast({

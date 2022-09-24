@@ -26,7 +26,6 @@ const PromptPublicViewPage = () => {
   const toast = useToast()
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
-  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
   const [promptOwner, setPromptOwner] = useState('')
   const [promptOwnerAddress, setPromptOwnerAddress] = useState('')
   const [propmtTimeDiff, setPropmtTimeDiff] = useState("")
@@ -66,7 +65,6 @@ const PromptPublicViewPage = () => {
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
-        setQuestionNumAnswers(fetchedData.numAnswers)
       }
 
       const network = await provider.getNetwork()
@@ -172,7 +170,7 @@ const PromptPublicViewPage = () => {
         ) //TODO: add uri
         const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
-        const questionNumAnswersAdded = questionNumAnswers + 1
+        const questionNumAnswersAdded = id! + 1
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         const templateSnapshot = await getDoc(templateRef)
@@ -209,11 +207,11 @@ const PromptPublicViewPage = () => {
 
         if (promptSnapshot.exists()) {
           updateDoc(promptMetadataRef, {
-            [questionNumAnswersAdded.toString()]: promptData,
+            [id!]: promptData,
           })
         } else {
           setDoc(promptMetadataRef, {
-            [questionNumAnswersAdded.toString()]: promptData,
+            [id!]: promptData,
           })
         }
       }
@@ -240,7 +238,6 @@ const PromptPublicViewPage = () => {
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
-        setQuestionNumAnswers(fetchedData.numAnswers)
       }
     }
 
@@ -252,7 +249,7 @@ const PromptPublicViewPage = () => {
     <CommonLayout className={styles.page}>
       <div className={styles.heading}>{question}</div>
       <div className={styles.heading}>{questionContext}</div>
-      <div className={styles.heading}>Asked {questionNumAnswers} times</div>
+      <div className={styles.heading}>Asked {id} times</div>
       <div className={styles.intro}>
         By{' '}
         <a href={`https://etherscan.io/address/${promptOwnerAddress}`}>
