@@ -154,6 +154,7 @@ const TemplateViewPage = () => {
         if (fetchedData !== undefined) {
           updateDoc(templateRef, {
             trend: {
+              ...fetchedData,
               [currentTime]:
                 fetchedData[currentTime] !== undefined
                   ? fetchedData[currentTime] + 1

@@ -15,7 +15,6 @@ import { firestore, doc, getDoc } from '../../firebase'
 
 const UserProfilePage = () => {
   const [ENSName, setENSName] = useState('')
-  const [templateQuestionMapping, setTemplateQuestionMapping] = useState()
   const [allPrompts, setAllPrompts] = useState<string[]>()
   const [allTemplates, setAllTemplates] = useState<string[]>()
   const [allReplies, setAllReplies] = useState<string[]>()
@@ -46,7 +45,7 @@ const UserProfilePage = () => {
       const templateRef = doc(firestore, 'template-metadata', 'global')
       const templateSnapshot = await getDoc(templateRef)
       const count = templateSnapshot.data()?.count
-      var templateQuestionMappingTemp: any = {}
+      var templateQuestionMapping: any = {}
       if (count !== undefined) {
         for (let i = 1; i <= count; i++) {
           const templateRef = doc(firestore, 'template-metadata', i.toString())
@@ -54,11 +53,11 @@ const UserProfilePage = () => {
           const templateData = templateSnapshot.data()
           if (templateData !== undefined) {
             const templateQuestion = templateData.question
-            templateQuestionMappingTemp[i] = templateQuestion
+            templateQuestionMapping[i] = templateQuestion
           }
         }
       }
-      setTemplateQuestionMapping(templateQuestionMappingTemp)
+
       try {
         if (signerAdmin) {
           const LyonPromptContract = new Contract(
@@ -74,16 +73,14 @@ const UserProfilePage = () => {
 
           const allPromptsQuery =
             await LyonPromptContract.queryAllPromptByAddress(address)
-          console.log("allPromptsQuery", allPromptsQuery)
 
           //TODO: debug why there is error when using this
           var allTemplatesQueryInQuestion: string[] = []
           for (let i = 0; i < allPromptsQuery.length; i++) {
-            const templateId = Number(allPromptsQuery[i].templateId._hex)
-            const id = Number(allPromptsQuery[i].id._hex)
+            const templateId = parseInt(allPromptsQuery[i].templateId._hex)
+            // const id = Number(allPromptsQuery[i].id._hex)
             // allTemplatesQueryTemp.push([templateId, id])
             const templateQuestion = templateQuestionMapping![templateId]
-            console.log(templateQuestion)
             allTemplatesQueryInQuestion.push(templateQuestion)
           }
           
@@ -133,7 +130,7 @@ const UserProfilePage = () => {
       } catch (error: any) {
         toast({
           title: 'Error',
-          description: 'Request failed',
+          description: error.reason,
           status: 'error',
           duration: 9000,
           isClosable: true,

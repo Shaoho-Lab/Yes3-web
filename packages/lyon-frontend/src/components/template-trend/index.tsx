@@ -37,22 +37,25 @@ const TemplateTrend = ({
         trendKeys.forEach((key) => {
           data.push({ timeInterval: key, numAnswers: trend[key] })
         })
+        console.log(data)
         setTrendData(data)
       }
     }
 
     loadTrend()
   }, [])
+  
 
   return trendData.length > 0 ? (
     <div className={classNames(styles.templateTrend, className)} {...props}>
       <LineChart
-        width={400}
-        height={200}
+        width={500}
+        height={300}
         data={trendData}
         margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
       >
         <XAxis dataKey="timeInterval" />
+        <YAxis />
         <Tooltip />
         <CartesianGrid stroke="#f5f5f5" />
         <Line type="monotone" dataKey="numAnswers" stroke="#ff7300" yAxisId={0} />

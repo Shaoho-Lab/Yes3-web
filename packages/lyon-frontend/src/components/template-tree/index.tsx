@@ -12,28 +12,29 @@ export interface TemplateTreeProps
 const myConfig = {
   nodeHighlightBehavior: true,
   node: {
-    color: 'lightgreen',
+    color: '#3F5EFB',
     size: 120,
+    fontWeight: '900',
     highlightStrokeColor: 'blue',
+    symbolType: 'circle',
   },
   link: {
-    highlightColor: 'lightblue',
+    color: '#FC466B',
+    highlightColor: 'red',
   },
   height: 300,
-  width: 400,
+  width: 500,
   directed: true,
   automaticRearrangeAfterDropNode: true,
-  collapsible: true,
   highlightDegree: 2,
   highlightOpacity: 0.2,
   linkHighlightBehavior: true,
   maxZoom: 12,
-  minZoom: 0.05,
-  panAndZoom: false,
-  staticGraph: false,
+  minZoom: 1,
+  labelPosition: 'top',
   d3: {
     alphaTarget: 0.05,
-    gravity: -250,
+    gravity: -100,
     linkLength: 120,
     linkStrength: 2,
   },
@@ -105,8 +106,9 @@ const TemplateTree = ({
 
     loadGraph()
   }, [])
+
   return (
-    <div className={classNames(styles.templateTree, className)} {...props}>
+    // <div className={classNames(styles.templateTree, className)} {...props}>
       <Graph
         id="graph-id"
         data={treeData? treeData : {nodes: [], links: []}}
@@ -114,7 +116,7 @@ const TemplateTree = ({
         onClickNode={onClickNode}
         onClickLink={onClickLink}
       />
-    </div>
+    // </div>
   )
 }
 
