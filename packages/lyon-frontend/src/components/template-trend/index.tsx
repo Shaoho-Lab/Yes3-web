@@ -58,7 +58,7 @@ const TemplateTrend = ({
         <YAxis />
         <Tooltip />
         <CartesianGrid stroke="#f5f5f5" />
-        <Line type="monotone" dataKey="numAnswers" stroke="#ff7300" yAxisId={0} />
+        <Line type="monotone" dataKey="numAnswers" stroke="#FC466B" yAxisId={0} />
       </LineChart>
     </div>
   ) : null
