@@ -2,6 +2,8 @@ import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import { useNavigate } from 'react-router-dom'
 import styles from './index.module.scss'
+import sbt from './sbt.png'
+import nft from './nft.png'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -56,7 +58,9 @@ const LandingPage = () => {
             <br />
             <br />
             Use existing NFT template
-            <div className={styles.squareLeft} />
+            <div className={styles.squareLeft}>
+              <img src={nft} />
+            </div>
           </div>
           <div className={styles.arrow} />
           <div className={styles.step}>
@@ -71,7 +75,9 @@ const LandingPage = () => {
               (SBT, or Soulbound Tokens, are non-transferrable NFT designed to
               show your permenant credentials)
             </small>
-            <div className={styles.squareRight} />
+            <div className={styles.squareRight}>
+              <img src={sbt} />
+            </div>
           </div>
         </div>
       </div>
