@@ -9,7 +9,7 @@ const LandingPage = () => {
   return (
     <CommonLayout className={styles.page}>
       <div className={styles.firstView}>
-        <div className={styles.heading}>Lyon is a P2P credential platform</div>
+        <div className={styles.heading}>Yes3 is a P2P credential platform</div>
         <div className={styles.description}>
           You can ask anything and get your replies on chain
         </div>
@@ -24,7 +24,7 @@ const LandingPage = () => {
             Want to record someone's promise on chain?
             <br />
             <br />
-            Ask them a question and record their reply with Lyon!
+            Ask them a question and record their reply with Yes3!
           </div>
         </Card>
         <Card className={styles.card}>
@@ -35,6 +35,7 @@ const LandingPage = () => {
             <br />
             <br />
             Describe it and ask for endorsement!
+            <br />
           </div>
         </Card>
         <Card className={styles.card}>

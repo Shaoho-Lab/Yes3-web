@@ -104,7 +104,7 @@ const Edit = () => {
         </h1>
         <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
           Your new SBT page can be viewed here：
-          <a href="abc.com">
+          <a href={'/' + templateId + '/' + { id }}>
             https://lyonprotocol.xyz/prompts/{templateId}/{id}
           </a>
         </h1>

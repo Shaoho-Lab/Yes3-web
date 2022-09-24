@@ -16,7 +16,7 @@ import {
 } from '../../firebase'
 import { useNavigate } from 'react-router-dom'
 import Popup from 'components/popup'
-import NFTSBTMintBox from 'components/NFTSBTMintBox'
+import NFTMintBox from 'components/NFTMintBox'
 
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
@@ -84,7 +84,7 @@ const TemplateCreatePage = () => {
           templateContext,
           '',
         ) //TODO: add template uri
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash 
+        const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
 
         const templateMetadataRef = doc(
@@ -127,7 +127,7 @@ const TemplateCreatePage = () => {
         isClosable: true,
       })
     }
-    
+
     handleClick()
   }
 
@@ -166,9 +166,10 @@ const TemplateCreatePage = () => {
           Mint
         </div>
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-          <NFTSBTMintBox question={templateQuestion} replyShow={''} />
+          <NFTMintBox question={templateQuestion} replyShow={''} />
+          <br />
           <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-            Preview your SBT, then click the button to mint your SBT!
+            Preview your NFT, then click the button to mint your NFT!
           </h1>
           <br></br>
           <div style={{ display: 'flex' }}>
@@ -185,7 +186,7 @@ const TemplateCreatePage = () => {
                 </h1>
                 <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
                   Find your question NFT here:
-                  <a href="abc.com">
+                  <a href={'/templates/' + templateId}>
                     https://lyonprotocol.xyz/templates/{templateId}
                   </a>
                 </h1>

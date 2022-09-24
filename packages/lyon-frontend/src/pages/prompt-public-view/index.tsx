@@ -35,6 +35,7 @@ const PromptPublicViewPage = () => {
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
   const [commentList, setCommentList] = useState<string[][]>()
   const [chosenReplies, setChosenReplies] = useState<string[]>([])
+  const [numAnswers, setNumAnswers] = useState(0)
   const handleClick = () => {
     if (mintConfirm != true) {
       setMintConfirm(current => !current)
@@ -190,6 +191,7 @@ const PromptPublicViewPage = () => {
                   : 1,
             },
             numAnswers: questionNumAnswersAdded,
+            //setNumAnswers(numAnswers)
           })
           // setQuestionNumAnswers(questionNumAnswers + 1)
           handleClick()
@@ -297,6 +299,7 @@ const PromptPublicViewPage = () => {
           </div>
           <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
             <NFTSBTMintBox question={question} replyShow={''} />
+            <br />
             <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
               Preview your SBT, then click the button to mint your SBT!
             </h1>
@@ -312,7 +315,7 @@ const PromptPublicViewPage = () => {
                   </h1>
                   <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
                     Share this link to your friends for reply：
-                    <a href="abc.com">
+                    <a href={'/' + templateId + '/' + { id }}>
                       https://lyonprotocol.xyz/prompts/{templateId}/{id}
                     </a>
                   </h1>

@@ -1,19 +1,3 @@
-// import React from 'react'
-// import Popup from './popupModal'
-
-// interface PopupWrapperProps {
-//   isVisible: boolean
-//   onClose: () => void
-// }
-
-// const PopupWrapper: React.FC<PopupWrapperProps> = ({ onClose, isVisible }) => {
-//   if (!isVisible) {
-//     return null
-//   }
-//   return <Popup onClose={onClose} />
-// }
-
-//export default PopupWrapper
 import React, { ButtonHTMLAttributes, HtmlHTMLAttributes } from 'react'
 import styles from './index.module.scss'
 

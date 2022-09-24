@@ -20,13 +20,20 @@ import { ethers } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
 import LyonPrompt from 'contracts/LyonPrompt.json'
 import { getDefaultProvider } from '@ethersproject/providers'
+import Popup from 'components/popup'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
 const NotReplied = () => {
   const [comment, setComment] = useState('')
   const [replyType, setReplyType] = useState(REPLY_TYPES[0])
-
+  const [buttonPopup, setButtonPopup] = useState(false)
+  const [mintConfirm, setMintConfirm] = useState(false)
+  const handleClick = () => {
+    if (mintConfirm != true) {
+      setMintConfirm(current => !current)
+    }
+  }
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
   const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
@@ -39,9 +46,11 @@ const NotReplied = () => {
   const { data, error, signMessage } = useSignMessage({
     onSuccess(data, variables) {
       setSignatureHash(data)
+      setButtonPopup(true)
       // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
     },
     onError(error) {
+      setButtonPopup(false)
       toast({
         title: 'Error',
         description: 'Sign failed',
@@ -66,7 +75,7 @@ const NotReplied = () => {
     const name = userAddressNameMapping[address]
     return name ? name : address
   }
-  
+
   useEffect(() => {
     const loadPromptData = async () => {
       const templateMetadataRef = doc(
@@ -121,43 +130,43 @@ const NotReplied = () => {
 
         const promptRef = doc(firestore, 'prompt-metadata', templateId!)
         const promptSnapshot = await getDoc(promptRef)
-          const promptFetchedData = promptSnapshot.data()?.[id!]
-          if (promptFetchedData !== undefined) {
-            const replyData = {
-              comment: comment,
-              createTime: serverTimestamp(),
-              replierDetail: replyType,
-              signature: signatureHash,
-            }
-
-            const keysList = promptFetchedData.keys
-            if (!keysList.includes(address)) {
-              keysList.push(address)
-            }
-            const updateReplyData = {
-              ...promptFetchedData,
-              keys: keysList,
-              replies: {
-                ...promptFetchedData.replies,
-                [address!]: replyData,
-              },
-            }
-            updateDoc(promptRef, {
-              [id!]: updateReplyData,
-            })
+        const promptFetchedData = promptSnapshot.data()?.[id!]
+        if (promptFetchedData !== undefined) {
+          const replyData = {
+            comment: comment,
+            createTime: serverTimestamp(),
+            replierDetail: replyType,
+            signature: signatureHash,
           }
+
+          const keysList = promptFetchedData.keys
+          if (!keysList.includes(address)) {
+            keysList.push(address)
+          }
+          const updateReplyData = {
+            ...promptFetchedData,
+            keys: keysList,
+            replies: {
+              ...promptFetchedData.replies,
+              [address!]: replyData,
+            },
+          }
+          updateDoc(promptRef, {
+            [id!]: updateReplyData,
+          })
+        }
 
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         const templateSnapshot = await getDoc(templateRef)
-          const templateFetchedData = templateSnapshot.data()?.connections
-          if (templateFetchedData !== undefined) {
-            updateDoc(templateRef, {
-              connections: arrayUnion({
-                endorserAddress: address,
-                requesterAddress: requesterAddr,
-              }),
-            })
-          }
+        const templateFetchedData = templateSnapshot.data()?.connections
+        if (templateFetchedData !== undefined) {
+          updateDoc(templateRef, {
+            connections: arrayUnion({
+              endorserAddress: address,
+              requesterAddress: requesterAddr,
+            }),
+          })
+        }
       }
     } catch (error: any) {
       toast({
@@ -205,6 +214,11 @@ const NotReplied = () => {
           <div className={styles.confirm} onClick={() => handleReply()}>
             Sign your reply
           </div>
+          <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+            <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+              Reply Success - Congrats!
+            </h1>
+          </Popup>
         </div>
       </Card>
     </CommonLayout>

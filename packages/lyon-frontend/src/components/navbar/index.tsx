@@ -4,6 +4,7 @@ import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useNavigate } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 import styles from './index.module.scss'
+import logo from './logo.png'
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -14,9 +15,11 @@ const Navbar = ({ className, ...props }: NavbarProps) => {
 
   return (
     <div className={classNames(styles.navbar, className)} {...props}>
-      <div className={styles.logo} onClick={() => navigate('/app')}>
-        Yes3
-      </div>
+      <img
+        src={logo}
+        className={styles.logo}
+        onClick={() => navigate('/app')}
+      />
       {address ? (
         <img
           className={styles.jazzicon}
