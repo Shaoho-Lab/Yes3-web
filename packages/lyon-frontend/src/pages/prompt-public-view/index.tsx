@@ -28,13 +28,13 @@ const PromptPublicViewPage = () => {
   const [questionContext, setQuestionContext] = useState('')
   const [promptOwner, setPromptOwner] = useState('')
   const [promptOwnerAddress, setPromptOwnerAddress] = useState('')
-  const [propmtTimeDiff, setPropmtTimeDiff] = useState("")
+  const [propmtTimeDiff, setPropmtTimeDiff] = useState('')
   const [buttonPopup, setButtonPopup] = useState(false)
   const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
   const [commentList, setCommentList] = useState<string[][]>()
-  const [chosenRepliesString, setChosenRepliesString] = useState<string>('')
+  const [chosenReplies, setChosenReplies] = useState<string[]>([])
   const handleClick = () => {
     if (mintConfirm != true) {
       setMintConfirm(current => !current)
@@ -80,21 +80,24 @@ const PromptPublicViewPage = () => {
       const promptData = promptSnapshot.data()
       if (promptData !== undefined) {
         const promptOwnerAddress = promptData[id!].promptOwner
-        const promptOwnerName = getName(userAddressNameMapping, promptOwnerAddress)
+        const promptOwnerName = getName(
+          userAddressNameMapping,
+          promptOwnerAddress,
+        )
         const promptCreateTime = promptData[id!].createTime
         setPromptOwnerAddress(promptOwnerAddress)
         setPromptOwner(promptOwnerName)
         const diff = Math.abs(Date.now() - promptCreateTime.toDate())
-        if (diff < (1000 * 60 * 60 * 24)) {
-          setPropmtTimeDiff("Today")
-        } 
-        else {
+        if (diff < 1000 * 60 * 60 * 24) {
+          setPropmtTimeDiff('Today')
+        } else {
           const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
-          setPropmtTimeDiff(diffDays + " days ago")
+          setPropmtTimeDiff(diffDays + ' days ago')
         }
 
         const replies = promptData[id!].replies
         const chosenReplies = promptData[id!].chosenReplies
+
         if (replies !== undefined) {
           const commentListTemp: string[][] = []
           for (let key of Object.keys(replies)) {
@@ -106,16 +109,16 @@ const PromptPublicViewPage = () => {
           setCommentList(commentListTemp)
         }
         if (chosenReplies !== undefined) {
-          let chosenRepliesTemp = ''
+          let chosenRepliesTemp: string[] = []
           for (let key of Object.keys(chosenReplies)) {
             const name = getName(userAddressNameMapping, key)
             const value = chosenReplies[key]
-            chosenRepliesTemp = chosenRepliesTemp.concat(
-              name + ': ' + value.replierDetail + ';',
-            )
+            chosenRepliesTemp = [...chosenRepliesTemp, value.replierDetail]
+            console.log(value.replierDetail)
           }
-
-          setChosenRepliesString(chosenRepliesTemp)
+          console.log(chosenReplies)
+          console.log(chosenRepliesTemp)
+          setChosenReplies(chosenRepliesTemp)
         }
       }
     }
@@ -260,7 +263,7 @@ const PromptPublicViewPage = () => {
       <div className={styles.content}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={chosenRepliesString} />
+            <NFTSBTBox question={question} replyShow={chosenReplies} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>Comments</div>

@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 export interface NFTSBTBoxProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   question: string
-  replyShow: string
+  replyShow: string[]
 }
 
 const NFTSBTBox = ({
@@ -18,9 +18,14 @@ const NFTSBTBox = ({
   return (
     <div className={styles.body} id="NFTSBT">
       <h5>{question}</h5>
-      <a href="www.google.com" color="white">
-        {replyShow}
-      </a>
+      <div className="list-container">
+        {replyShow?.map((item, index) => (
+          <div key={index}>
+            <a color="white">{item}</a>
+          </div>
+        ))}
+      </div>
+
       <h6>Powered by Lyon with &lt;3</h6>
     </div>
   )

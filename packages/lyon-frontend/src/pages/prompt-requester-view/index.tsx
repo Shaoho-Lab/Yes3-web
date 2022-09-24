@@ -93,9 +93,23 @@ const Edit = () => {
   )
   // Add/Remove checked item from list
   const handleClick = () => {
+    console.log('confirmed')
     if (mintConfirm != true) {
       setMintConfirm(current => !current)
     }
+    return (
+      <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+        <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+          Update Success - Congrats!
+        </h1>
+        <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
+          Your new SBT page can be viewed here：
+          <a href="abc.com">
+            https://lyonprotocol.xyz/prompts/{templateId}/{id}
+          </a>
+        </h1>
+      </Popup>
+    )
   }
   // const { library, account, chainId } = context
 
@@ -111,6 +125,7 @@ const Edit = () => {
   const isChecked = (item: string) =>
     checked.includes(item) ? 'checked-item' : 'not-checked-item'
 
+  console.log(checked)
   const checkedItems = checked.length
     ? checked.reduce((total, item) => {
         return total + '; ' + item
@@ -169,7 +184,6 @@ const Edit = () => {
             [id!]: promptData,
           })
         }
-
         handleClick()
       }
     } catch (error: any) {
@@ -238,7 +252,7 @@ const Edit = () => {
       <div className={styles.container}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={checkedItems} />
+            <NFTSBTBox question={question} replyShow={checked} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>
@@ -261,7 +275,6 @@ const Edit = () => {
                 ))}
               </div>
             </div>
-            <div>{`Items checked are: ${checkedItems}`}</div>
           </div>
         </div>
       </div>
