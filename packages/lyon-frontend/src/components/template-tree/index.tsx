@@ -109,9 +109,7 @@ const TemplateTree = ({
           }
         }
         setTreeData(data)
-      } else {
-        throw new Error('No data')
-      }
+      } 
     }
 
     loadGraph()
