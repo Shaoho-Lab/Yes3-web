@@ -1,6 +1,7 @@
 import { doc, firestore, getDoc } from 'common/firebase'
 import { useEffect, useState } from 'react'
 import { Graph } from 'react-d3-graph'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 export interface TemplateTreeProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -38,13 +39,7 @@ const myConfig = {
   },
 }
 
-const onClickNode = function (nodeId: string) {
-  window.alert(`Clicked node ${nodeId}`)
-}
-
-const onClickLink = function (source: string, target: string) {
-  window.alert(`Clicked link between ${source} and ${target}`)
-}
+var nodeIdNameMapping: any = {}
 
 const TemplateTree = ({
   className,
@@ -58,7 +53,15 @@ const TemplateTree = ({
     nodes: [],
     links: [],
   })
+  const navigate = useNavigate()
 
+  const onClickNode = function (nodeId: string) {
+    navigate(`/users/${nodeIdNameMapping[nodeId]}`)
+    // window.alert(`Clicked node ${nodeId}`)
+  }
+  const onClickLink = function (source: string, target: string) {
+    window.alert(`Clicked link between ${source} and ${target}`)
+  }
   useEffect(() => {
     const getName = (userAddressNameMapping: any, address: string) => {
       const name = userAddressNameMapping[address]
@@ -84,6 +87,13 @@ const TemplateTree = ({
         const templateData = fetchedData.connections
         if (templateData !== undefined) {
           for (var i = 0; i < templateData.length; i++) {
+            nodeIdNameMapping[
+              getName(userAddressNameMapping, templateData[i].endorserAddress)
+            ] = templateData[i].endorserAddress
+            nodeIdNameMapping[
+              getName(userAddressNameMapping, templateData[i].requesterAddress)
+            ] = templateData[i].requesterAddress
+
             data.nodes.push({
               id: getName(
                 userAddressNameMapping,
@@ -109,7 +119,7 @@ const TemplateTree = ({
           }
         }
         setTreeData(data)
-      } 
+      }
     }
 
     loadGraph()
@@ -122,7 +132,7 @@ const TemplateTree = ({
       data={treeData ? treeData : { nodes: [], links: [] }}
       config={myConfig}
       onClickNode={onClickNode}
-      onClickLink={onClickLink}
+      // onClickLink={onClickLink}
     />
     // </div>
   )
