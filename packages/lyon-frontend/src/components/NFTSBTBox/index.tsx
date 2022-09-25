@@ -1,10 +1,7 @@
 import classNames from 'classnames'
 import styles from './index.module.scss'
-import { firestore, doc, getDoc } from '../../firebase'
-import { useState, useEffect } from 'react'
 
-export interface NFTSBTBoxProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface NFTSBTBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   question: string
   replyShow: string[]
 }
@@ -16,7 +13,7 @@ const NFTSBTBox = ({
   ...props
 }: NFTSBTBoxProps) => {
   return (
-    <div className={styles.body} id="NFTSBT">
+    <div className={classNames(styles.body, className)} id="NFTSBT">
       <h5>{question}</h5>
       <div className="list-container">
         {replyShow?.map((item, index) => (

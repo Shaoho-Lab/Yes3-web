@@ -1,8 +1,6 @@
-import classNames from 'classnames'
-import styles from './index.module.scss'
-import { firestore, doc, getDoc } from '../../firebase'
+import { doc, firestore, getDoc } from 'common/firebase'
+import { useEffect, useState } from 'react'
 import { Graph } from 'react-d3-graph'
-import { useState, useEffect } from 'react'
 
 export interface TemplateTreeProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -87,14 +85,26 @@ const TemplateTree = ({
         if (templateData !== undefined) {
           for (var i = 0; i < templateData.length; i++) {
             data.nodes.push({
-              id: getName(userAddressNameMapping, templateData[i].endorserAddress),
+              id: getName(
+                userAddressNameMapping,
+                templateData[i].endorserAddress,
+              ),
             })
             data.nodes.push({
-              id: getName(userAddressNameMapping, templateData[i].requesterAddress),
+              id: getName(
+                userAddressNameMapping,
+                templateData[i].requesterAddress,
+              ),
             })
             data.links.push({
-              source: getName(userAddressNameMapping, templateData[i].endorserAddress),
-              target: getName(userAddressNameMapping, templateData[i].requesterAddress),
+              source: getName(
+                userAddressNameMapping,
+                templateData[i].endorserAddress,
+              ),
+              target: getName(
+                userAddressNameMapping,
+                templateData[i].requesterAddress,
+              ),
             })
           }
         }
@@ -105,17 +115,17 @@ const TemplateTree = ({
     }
 
     loadGraph()
-  }, [])
+  }, [templateId])
 
   return (
     // <div className={classNames(styles.templateTree, className)} {...props}>
-      <Graph
-        id="graph-id"
-        data={treeData? treeData : {nodes: [], links: []}}
-        config={myConfig}
-        onClickNode={onClickNode}
-        onClickLink={onClickLink}
-      />
+    <Graph
+      id="graph-id"
+      data={treeData ? treeData : { nodes: [], links: [] }}
+      config={myConfig}
+      onClickNode={onClickNode}
+      onClickLink={onClickLink}
+    />
     // </div>
   )
 }

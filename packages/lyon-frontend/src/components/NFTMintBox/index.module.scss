@@ -1,37 +1,43 @@
-:root{
-  --primary:#FC466B;
-  --secondary:#3F5EFB;
-}
-.body{
-  height:400px;
-  width:400px;
-  margin:0;
-  display: grid;
-  place-items:center;
-  place-content:center;
- background:black;
- background-size: 700px 700px;
-}
+.NFTMintBox {
+  background: black;
 
-.padding{
-  margin:10px;
-}
+  height: 400px;
+  width: 400px;
 
-h5{
-  font-family:"ubuntu";
-  font-size: 4rem;
-  font-weight: 700;
-  color: white;
-  margin-left: 30px;
-}
-
-h6{
-  font-family:"ubuntu";
-  font-size: 3 rem;
-  font-weight: 550;
-  color: white;
   position: relative;
-  right: -5.5rem;
-  bottom:-4rem;
-  padding-right: 20;
+
+  .question {
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Ubuntu';
+    font-size: 45px;
+    font-weight: bold;
+    color: white;
+
+    line-height: 1.2;
+  }
+
+  .powerBy {
+    font-family: 'Ubuntu';
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+
+    position: absolute;
+
+    bottom: 20px;
+    right: 20px;
+  }
 }

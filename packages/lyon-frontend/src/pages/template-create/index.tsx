@@ -1,142 +1,59 @@
-import { useToast } from '@chakra-ui/react'
-import CommonLayout from 'components/common-layout'
-import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
-import styles from './index.module.scss'
-import { useSigner, useAccount } from 'wagmi'
-import { Contract } from '@ethersproject/contracts'
-import LyonTemplate from 'contracts/LyonTemplate.json'
 import {
-  firestore,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
+} from '@chakra-ui/react'
+import { Contract } from '@ethersproject/contracts'
+import {
   doc,
+  firestore,
   getDoc,
-  updateDoc,
-  setDoc,
   serverTimestamp,
-} from '../../firebase'
-import { useNavigate } from 'react-router-dom'
-import Popup from 'components/popup'
+  setDoc,
+  updateDoc,
+} from 'common/firebase'
+import Button from 'components/button'
+import CommonLayout from 'components/common-layout'
 import NFTMintBox from 'components/NFTMintBox'
-import { NFTStorage, File } from 'nft.storage'
-import * as htmlToImage from 'html-to-image'
+import LyonTemplate from 'contracts/LyonTemplate.json'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAccount, useSigner } from 'wagmi'
+import styles from './index.module.scss'
 
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
   const [templateContext, setTemplateContext] = useState('')
   const [templateId, setTemplateId] = useState('0')
-  const [buttonPopup, setButtonPopup] = useState(false)
-  const [mintConfirm, setMintConfirm] = useState(false)
-  const [chainId, setChainId] = useState(80001)
-  const [uri, setUri] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
   const navigate = useNavigate()
   const toast = useToast()
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
-  )
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
 
-  const handleClick = () => {
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-  }
-
-  useEffect(() => {
-    provider.getNetwork().then((network: any) => {
-      setChainId(network.chainId)
-    })
-  }, [])
-
-  const handleSwitchNetwork = async (networkId: number) => {
-    try {
-      if ((window as any).web3?.currentProvider) {
-        await (window as any).web3.currentProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${networkId.toString(16)}` }],
-        })
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message
-          ? `${error.message.substring(0, 120)}...`
-          : 'Please switch to Mumbai testnet to proceed the payment',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }
-
-  const client = new NFTStorage({
-    token:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
-  })
-
-  async function upload2IPFS(img: BlobPart) {
-    const metadata = await client.store({
-      name: 'Yes3',
-      description:
-        'Mint your social interactions on-chain! Powered by Lyon with <3',
-      image: new File([img], 'test.png', { type: 'image/png' }),
-    })
-    console.log(metadata.url)
-    setUri(metadata.url)
-  }
-
-  const HTML2PNG2IPFS = () => {
-    console.log('mint clicked')
-    var node = document.getElementById('NFTMint')
-    htmlToImage
-      .toPng(node!)
-      .then(function (dataUrl) {
-        // convert to file
-        var img = dataURLtoFile(dataUrl, 'image')
-        upload2IPFS(img)
-      })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error)
-      })
-  }
-
-  const dataURLtoFile = (dataUrl: string, filename: string) => {
-    const arr = dataUrl.split(',')
-    const mime = arr[0].match(/:(.*?);/)?.[1]
-    const bstr = window.atob(arr[1])
-
-    let n = bstr.length
-    let u8arr = new Uint8Array(n)
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n)
-    }
-
-    return new File([u8arr], filename, { type: mime })
-  }
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
 
   const handleMintTemplate = async () => {
-    HTML2PNG2IPFS()
-    console.log(uri)
     try {
-      if (provider && signer && chainId) {
-        if (chainId !== 80001) {
-          await handleSwitchNetwork(80001)
-          return
-        }
+      if (signer) {
         const LyonTemplateContract = new Contract(
           '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
           LyonTemplate.abi,
           signer,
         )
+
         const promptSafeMintResponse = await LyonTemplateContract.mintTemplate(
           templateQuestion,
           templateContext,
           '',
         ) //TODO: add template uri
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash
-        console.log('promptSafeMintResponse', promptSafeMintResponse)
+
+        console.log('promptSafeMintResponse', promptSafeMintResponse.hash)
 
         const templateMetadataRef = doc(
           firestore,
@@ -146,7 +63,7 @@ const TemplateCreatePage = () => {
         const templateMetadataSnapshot = await getDoc(templateMetadataRef)
         const fetchedData = templateMetadataSnapshot.data()
         const templateCount = fetchedData?.count + 1
-        setTemplateId(templateCount.toString())
+
         await updateDoc(templateMetadataRef, {
           count: templateCount,
         })
@@ -156,6 +73,7 @@ const TemplateCreatePage = () => {
           'template-metadata',
           templateCount!.toString(),
         )
+
         setDoc(templateRef, {
           question: templateQuestion,
           context: templateContext,
@@ -167,7 +85,9 @@ const TemplateCreatePage = () => {
           templateURI: '', //TODO: add template uri
         })
 
-        // navigate(`/app`)
+        setTemplateId(templateCount.toString())
+        setIsModalOpen(false)
+        setIsSuccessModalOpen(true)
       }
     } catch (error: any) {
       toast({
@@ -178,8 +98,6 @@ const TemplateCreatePage = () => {
         isClosable: true,
       })
     }
-
-    handleClick()
   }
 
   return (
@@ -198,7 +116,7 @@ const TemplateCreatePage = () => {
       />
       <textarea
         className={styles.textarea}
-        placeholder="context"
+        placeholder="What's the context?"
         value={templateContext}
         onChange={event =>
           setTemplateContext(event.target.value.replace(/\n/g, ''))
@@ -210,41 +128,81 @@ const TemplateCreatePage = () => {
         </div>
       </div>
       <div className={styles.buttons}>
-        <div className={styles.cancel} onClick={() => window.history.back()}>
+        <Button
+          className={styles.cancel}
+          variant="secondary"
+          onClick={() => window.history.back()}
+        >
           Cancel
-        </div>
-        <div className={styles.confirm} onClick={() => setButtonPopup(true)}>
+        </Button>
+        <Button
+          className={styles.confirm}
+          variant="primary"
+          onClick={() => {
+            if (templateQuestion.length === 0) {
+              toast({
+                title: 'Oops!',
+                description: 'Question content is required.',
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+              })
+            } else {
+              setIsModalOpen(true)
+            }
+          }}
+        >
           Mint
-        </div>
-        <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-          <NFTMintBox question={templateQuestion} replyShow={''} />
-          <br />
-          <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-            Preview your NFT, then click the button to mint your NFT!
-          </h1>
-          <br></br>
-          <div style={{ display: 'flex' }}>
-            <div
-              className={styles.confirm}
-              onClick={() => handleMintTemplate()}
-            >
-              Confirm
-            </div>
-            {mintConfirm && (
-              <div>
-                <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-                  Mint Success - Congrats!
-                </h1>
-                <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-                  Find your question NFT here:
-                  <a href={'/templates/' + templateId}>
-                    https://lyonprotocol.xyz/templates/{templateId}
-                  </a>
-                </h1>
-              </div>
-            )}
-          </div>
-        </Popup>
+        </Button>
+        <Modal
+          size="xl"
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Mint Question Template NFT</ModalHeader>
+            <ModalBody>
+              <p>Preview your NFT, then click the button to mint your NFT!</p>
+              <br />
+              <NFTMintBox question={templateQuestion} />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                size="medium"
+                variant="secondary"
+                onClick={() => setIsModalOpen(false)}
+                style={{ marginRight: 15 }}
+              >
+                Cancel
+              </Button>
+              <Button size="medium" onClick={() => handleMintTemplate()}>
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Modal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Mint Success - Congrats!</ModalHeader>
+            <ModalBody>
+              <p>Your question template NFT has been minted!</p>
+              <p>Now people can use it to mint SBTs.</p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                size="medium"
+                onClick={() => navigate(`/templates/${templateId}`)}
+              >
+                Navigate to your template
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </CommonLayout>
   )

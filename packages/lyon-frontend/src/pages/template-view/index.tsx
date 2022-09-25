@@ -1,71 +1,48 @@
-import { useToast } from '@chakra-ui/react'
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
+} from '@chakra-ui/react'
+import { Contract } from '@ethersproject/contracts'
+import {
+  doc,
+  firestore,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from 'common/firebase'
+import Button from 'components/button'
 import CommonLayout from 'components/common-layout'
-import styles from './index.module.scss'
+import NFTSBTMintBox from 'components/NFTSBTMintBox'
 import TemplateTree from 'components/template-tree'
 import TemplateTrend from 'components/template-trend'
-import { useEffect, useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import { Contract } from '@ethersproject/contracts'
 import LyonPrompt from 'contracts/LyonPrompt.json'
 import LyonTemplate from 'contracts/LyonTemplate.json'
-import {
-  firestore,
-  doc,
-  getDoc,
-  updateDoc,
-  setDoc,
-  serverTimestamp,
-} from '../../firebase'
-import { ethers } from 'ethers'
-import { useParams } from 'react-router-dom'
-import { confirmAlert } from 'react-confirm-alert'
+import { useEffect, useState } from 'react'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import { useSigner, useAccount } from 'wagmi'
-import Popup from 'components/popup'
-import NFTSBTMintBox from 'components/NFTSBTMintBox'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAccount, useSigner } from 'wagmi'
+import styles from './index.module.scss'
 
 const TemplateViewPage = () => {
+  const toast = useToast()
+  const navigate = useNavigate()
+
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
   const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
-  const [chainId, setChainId] = useState(80001)
-  const toast = useToast()
-  const context = useWeb3React()
-  const [buttonPopup, setButtonPopup] = useState(false)
-  const [mintConfirm, setMintConfirm] = useState(false)
-  const handleClick = () => {
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-  }
-  // const { library, account, chainId } = context
-  const { templateId } = useParams<{ templateId: string }>()
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
-  )
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
 
-  const submit = () => {
-    confirmAlert({
-      title: 'Confirm to mint',
-      message: 'Are you sure to do this?',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: () => alert('Click Yes'),
-          // onClick={() => {
-          //   handleMintPrompt()
-          // }}
-        },
-        {
-          label: 'No',
-          onClick: () => alert('Click No'),
-        },
-      ],
-      //NFTSBT: <NFTSBTBox question={question} replyShow={''} />,
-    })
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+
+  const { templateId } = useParams<{ templateId: string }>()
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
 
   useEffect(() => {
     const loadTemplateData = async () => {
@@ -74,54 +51,29 @@ const TemplateViewPage = () => {
         'template-metadata',
         templateId!,
       )
+
       const templateSnapshot = await getDoc(templateMetadataRef)
       const fetchedData = templateSnapshot.data()
+
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
         setQuestionNumAnswers(fetchedData.numAnswers)
       }
-
-      const network = await provider.getNetwork()
-      setChainId(network.chainId)
     }
 
     loadTemplateData()
-  }, [])
-
-  const handleSwitchNetwork = async (networkId: number) => {
-    try {
-      if ((window as any).web3?.currentProvider) {
-        await (window as any).web3.currentProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${networkId.toString(16)}` }],
-        })
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message
-          ? `${error.message.substring(0, 120)}...`
-          : 'Please switch to Mumbai testnet to proceed the payment',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }
+  }, [templateId])
 
   const handleMintPrompt = async () => {
     try {
-      if (provider && signer && chainId) {
-        if (chainId !== 80001) {
-          await handleSwitchNetwork(80001)
-          return
-        }
+      if (signer) {
         const LyonPromptContract = new Contract(
           '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signer,
         )
+
         const LyonTemplateContract = new Contract(
           '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
           LyonTemplate.abi,
@@ -136,21 +88,24 @@ const TemplateViewPage = () => {
           '',
         ) //TODO: add uri
 
-        const promptSafeMintResponseHash = promptSafeMintResponse.hash
         console.log('promptSafeMintResponse', promptSafeMintResponse)
 
         const templateNewPrompMinted =
           await LyonTemplateContract.newPrompMinted(templateId)
+
         console.log('templateNewPrompMinted', templateNewPrompMinted)
 
         const questionNumAnswersAdded = questionNumAnswers + 1
+
         setQuestionNumAnswers(questionNumAnswersAdded)
+
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         const templateSnapshot = await getDoc(templateRef)
         const fetchedData = templateSnapshot.data()?.trend
         const currentYear = new Date().getFullYear()
         const currentMonth = new Date().getMonth() + 1
         const currentTime = [currentYear, currentMonth].join('-')
+
         if (fetchedData !== undefined) {
           updateDoc(templateRef, {
             trend: {
@@ -186,25 +141,28 @@ const TemplateViewPage = () => {
             [questionNumAnswersAdded.toString()]: promptData,
           })
         }
+
+        setIsModalOpen(false)
+        setIsSuccessModalOpen(true)
       }
     } catch (error: any) {
+      console.log(error)
+
       toast({
         title: 'Ask Error',
-        description: error.reason,
+        description: error.message,
         status: 'error',
         duration: 9000,
         isClosable: true,
       })
     }
-
-    handleClick()
   }
 
   return question !== '' && questionContext !== '' ? (
     <CommonLayout className={styles.page}>
       <div className={styles.content}>
         <div className={styles.heading}>{question}</div>
-        <div className={styles.heading}>{questionContext}</div>
+        <div className={styles.description}>{questionContext}</div>
         <div className={styles.charts}>
           <div className={styles.stats}>
             <TemplateTrend templateId={templateId!} />
@@ -215,50 +173,76 @@ const TemplateViewPage = () => {
         </div>
         <br></br>
         <div className={styles.buttons}>
-          <div className={styles.cancel} onClick={() => window.history.back()}>
+          <Button
+            className={styles.cancel}
+            variant="secondary"
+            onClick={() => window.history.back()}
+          >
             Back
-          </div>
-          <div
+          </Button>
+          <Button
             className={styles.confirm}
-            // onClick={submit}
-            onClick={() => setButtonPopup(true)}
+            onClick={() => setIsModalOpen(true)}
           >
             Ask the question
-          </div>
-          <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-            <NFTSBTMintBox question={question} replyShow={''} />
-            <br />
-            <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-              Preview your SBT, then click the button to mint your SBT!
-            </h1>
-            <br></br>
-            <div style={{ display: 'flex' }}>
-              <div
-                className={styles.confirm}
-                onClick={() => {
-                  handleMintPrompt()
-                }}
-              >
-                Confirm
-              </div>
-              {mintConfirm && (
-                <div>
-                  <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-                    Mint Success - Congrats!
-                  </h1>
-                  <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-                    Share this link to your friends for reply：
-                    <a
-                      href={'/prompts/' + templateId + '/' + questionNumAnswers}
-                    >
-                      https://lyonprotocol.xyz/prompts/{templateId}/
-                      {questionNumAnswers}
-                    </a>
-                  </h1>
-                </div>
-              )}
-            </div>
-          </Popup>
+          </Button>
+          <Modal
+            size="xl"
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Mint Question Prompt SBT</ModalHeader>
+              <ModalBody>
+                <p>Preview your SBT, then click the button to mint your SBT!</p>
+                <br />
+                <NFTSBTMintBox question={question} />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  size="medium"
+                  variant="secondary"
+                  onClick={() => setIsModalOpen(false)}
+                  style={{ marginRight: 15 }}
+                >
+                  Cancel
+                </Button>
+                <Button size="medium" onClick={() => handleMintPrompt()}>
+                  Confirm
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          <Modal
+            isOpen={isSuccessModalOpen}
+            onClose={() => setIsSuccessModalOpen(false)}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Mint Success - Congrats!</ModalHeader>
+              <ModalBody>
+                <p>Your question prompt SBT has been minted!</p>
+                <p>Share this link to your friends for reply:</p>
+                <p>
+                  <a href={'/prompts/' + templateId + '/' + questionNumAnswers}>
+                    https://yes3.app/prompts/{templateId}/{questionNumAnswers}
+                    /reply
+                  </a>
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  size="medium"
+                  onClick={() =>
+                    navigate(`/prompts/${templateId}/${questionNumAnswers}`)
+                  }
+                >
+                  Navigate to your SBT
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </div>
       </div>
     </CommonLayout>

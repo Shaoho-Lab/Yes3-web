@@ -1,38 +1,21 @@
-import classNames from 'classnames'
-import Card from 'components/card'
-import Checkbox from 'components/checkbox'
-import CommonLayout from 'components/common-layout'
-import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import styles from './index.module.scss'
-import NFTSBTBox from 'components/NFTSBTBox'
-import * as htmlToImage from 'html-to-image'
-import { NFTStorage, File } from 'nft.storage'
-import { useParams } from 'react-router-dom'
-import {
-  firestore,
-  doc,
-  getDoc,
-  updateDoc,
-  setDoc,
-  serverTimestamp,
-} from '../../firebase'
-import Popup from 'components/popup'
-import NFTSBTMintBox from 'components/NFTSBTMintBox'
 import { useToast } from '@chakra-ui/react'
-import { useSigner, useAccount } from 'wagmi'
 import { Contract } from '@ethersproject/contracts'
+import { doc, firestore, getDoc, updateDoc } from 'common/firebase'
+import Button from 'components/button'
+import Card from 'components/card'
+import CommonLayout from 'components/common-layout'
+import NFTSBTBox from 'components/NFTSBTBox'
 import LyonPrompt from 'contracts/LyonPrompt.json'
-import LyonTemplate from 'contracts/LyonTemplate.json'
 import { ethers } from 'ethers'
+import * as htmlToImage from 'html-to-image'
+import { File, NFTStorage } from 'nft.storage'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useAccount, useSigner } from 'wagmi'
+import styles from './index.module.scss'
 
-const Edit = () => {
+const PromptRequesterViewPage = () => {
   const [question, setQuestion] = useState('')
-  const [questionContext, setQuestionContext] = useState('')
-  const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
-  const [buttonPopup, setButtonPopup] = useState(false)
-  const [mintConfirm, setMintConfirm] = useState(false)
-  const [chainId, setChainId] = useState(80001)
   const [checked, setChecked] = useState<string[]>([])
   const [commentList, setCommentList] = useState<string[][]>()
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
@@ -92,27 +75,6 @@ const Edit = () => {
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
   )
-  // Add/Remove checked item from list
-  const handleClick = () => {
-    console.log('confirmed')
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-    return (
-      <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-        <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-          Update Success - Congrats!
-        </h1>
-        <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-          Your new SBT page can be viewed here：
-          <a href={'/' + templateId + '/' + { id }}>
-            https://lyonprotocol.xyz/prompts/{templateId}/{id}
-          </a>
-        </h1>
-      </Popup>
-    )
-  }
-  // const { library, account, chainId } = context
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     var updatedList: string[] = [...checked]
@@ -126,41 +88,11 @@ const Edit = () => {
   const isChecked = (item: string) =>
     checked.includes(item) ? 'checked-item' : 'not-checked-item'
 
-  console.log(checked)
-  const checkedItems = checked.length
-    ? checked.reduce((total, item) => {
-        return total + '; ' + item
-      })
-    : ''
-
-  const handleSwitchNetwork = async (networkId: number) => {
-    try {
-      if ((window as any).web3?.currentProvider) {
-        await (window as any).web3.currentProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${networkId.toString(16)}` }],
-        })
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message
-          ? `${error.message.substring(0, 120)}...`
-          : 'Please switch to Mumbai testnet to proceed the payment',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }
   const handleMintPrompt = async () => {
     try {
       HTML2PNG2IPFS()
-      if (provider && signer && chainId) {
-        if (chainId !== 80001) {
-          await handleSwitchNetwork(80001)
-          return
-        }
+
+      if (signer) {
         const LyonPromptContract = new Contract(
           '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
@@ -185,7 +117,6 @@ const Edit = () => {
             [id!]: promptData,
           })
         }
-        handleClick()
       }
     } catch (error: any) {
       toast({
@@ -211,17 +142,15 @@ const Edit = () => {
       )
       const templateSnapshot = await getDoc(templateMetadataRef)
       const fetchedData = templateSnapshot.data()
+
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
-        setQuestionContext(fetchedData.context)
-        setQuestionNumAnswers(fetchedData.numAnswers)
       }
 
-      const network = await provider.getNetwork()
-      setChainId(network.chainId)
       const userRef = doc(firestore, 'user-metadata', 'info')
       const userRefSnapshot = await getDoc(userRef)
       const userAddressNameMapping = userRefSnapshot.data()
+
       setUserAddressNameMapping(userAddressNameMapping)
 
       const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
@@ -280,22 +209,23 @@ const Edit = () => {
         </div>
       </div>
       <div className={styles.buttons}>
-        <div className={styles.cancel} onClick={() => window.history.back()}>
+        <Button
+          className={styles.cancel}
+          variant="secondary"
+          onClick={() => window.history.back()}
+        >
           Cancel
-        </div>
-        <div className={styles.confirm} onClick={() => handleMintPrompt()}>
+        </Button>
+        <Button
+          className={styles.confirm}
+          variant="primary"
+          onClick={() => handleMintPrompt()}
+        >
           Update your SBT
-        </div>
+        </Button>
       </div>
     </CommonLayout>
   )
-}
-
-const PromptRequesterViewPage = () => {
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search)
-
-  return <Edit />
 }
 
 export default PromptRequesterViewPage

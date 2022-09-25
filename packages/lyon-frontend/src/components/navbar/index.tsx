@@ -18,14 +18,15 @@ const Navbar = ({ className, ...props }: NavbarProps) => {
       <img
         src={logo}
         className={styles.logo}
-        onClick={() => navigate('/app')}
+        alt="Yes3"
+        onClick={() => navigate('/')}
       />
       {address ? (
         <img
           className={styles.jazzicon}
           src={buildJazziconDataUrl(address)}
           alt={address}
-          onClick={() => navigate(`/user/profile/${address}`)}
+          onClick={() => navigate(`/users/${address}`)}
         />
       ) : (
         <ConnectKitButton />

@@ -1,5 +1,3 @@
-@import 'styles/mixins.scss';
-
 .page {
   .header {
     position: fixed;
@@ -38,28 +36,19 @@
       .createButton {
         margin-left: 15px;
 
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-
         width: 120px;
         height: 60px;
-
-        border-radius: 15px;
 
         font-size: 22px;
         font-weight: bold;
 
         background-color: #28aca8;
         color: #ffffff;
-
-        @include buttonEffects;
       }
     }
   }
 
-  .questionList {
+  .content {
     padding: 15px;
 
     margin-top: 160px;

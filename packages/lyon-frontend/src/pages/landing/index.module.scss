@@ -1,5 +1,3 @@
-@import 'styles/mixins.scss';
-
 .page {
   padding: 15px;
 
@@ -24,24 +22,6 @@
       margin-top: 30px;
 
       align-self: flex-end;
-
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-
-      width: 180px;
-      height: 60px;
-
-      border-radius: 15px;
-
-      font-size: 22px;
-      font-weight: bold;
-
-      background-color: #5856d6;
-      color: #ffffff;
-
-      @include buttonEffects;
     }
   }
 
@@ -50,11 +30,10 @@
 
     display: flex;
     flex-direction: row;
+    align-items: stretch;
 
     .card {
       flex: 1;
-      height: 240px;
-
       margin-right: 20px;
 
       &:last-child {
@@ -67,7 +46,6 @@
 
       .description {
         font-size: 18px;
-
         margin-top: 20px;
       }
     }
@@ -80,21 +58,25 @@
       font-size: 32px;
       font-weight: bold;
 
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     .steps {
+      padding: 20px;
+
+      border-radius: 15px;
+      background-color: #fafafa;
+
       display: flex;
       flex-direction: row;
       align-items: flex-start;
 
       .step {
+        position: relative;
         flex: 1;
         height: 200px;
 
         font-size: 20px;
-
-        position: relative;
 
         .squareLeft {
           position: absolute;
@@ -105,7 +87,8 @@
           width: 120px;
           height: 120px;
 
-          transform: rotate(-20deg);
+          transform: rotate(-15deg);
+          opacity: 0.2;
 
           background-color: #00000010;
         }
@@ -115,12 +98,12 @@
 
           left: 0;
           bottom: 0;
-          z-index: -1;
 
           width: 150px;
-          height: 100px;
+          height: 150px;
 
           transform: rotate(10deg);
+          opacity: 0.2;
 
           background-color: #00000010;
         }
@@ -133,6 +116,7 @@
 
         width: 0;
         height: 0;
+        border-color: #000000;
         border-width: 6px;
         border-style: solid;
         border-bottom-color: transparent;
@@ -173,12 +157,13 @@
       font-size: 32px;
       font-weight: bold;
 
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     .graph {
       height: 400px;
-      background-color: #eeeeee;
+      background-color: #fafafa;
+      border-radius: 15px;
     }
   }
 }

@@ -1,6 +1,4 @@
-@import 'styles/mixins.scss';
-
-.questionCard {
+.templateCard {
   position: relative;
 
   .firstRow {
@@ -30,32 +28,10 @@
     flex-direction: row;
     align-items: center;
 
-    .stats {
+    .count {
       flex: 1;
-      font-size: 16px;
+      font-size: 17px;
       color: #00000090;
-    }
-
-    .button {
-      user-select: none;
-
-      width: 180px;
-      height: 40px;
-
-      background-color: #5856d6;
-      color: #ffffff;
-
-      font-size: 18px;
-      font-weight: bold;
-
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 12px;
-
-      @include buttonEffects;
     }
   }
 }

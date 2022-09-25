@@ -2,22 +2,19 @@ import classNames from 'classnames'
 import styles from './index.module.scss'
 
 export interface NFTMintBoxProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   question: string
-  replyShow: string
 }
 
-const NFTMintBox = ({
-  className,
-  question,
-  replyShow,
-  ...props
-}: NFTMintBoxProps) => {
+const NFTMintBox = ({ className, question, ...props }: NFTMintBoxProps) => {
   return (
-    <div className={styles.body} id="NFTMint">
-      <h5>{question}</h5>
-      <a color="white">{replyShow}</a>
-      <h6>Powered by Lyon with &lt;3</h6>
+    <div
+      id="NFTSBTMint"
+      className={classNames(styles.NFTMintBox, className)}
+      {...props}
+    >
+      <div className={styles.question}>{question}</div>
+      <div className={styles.powerBy}>Powered by Lyon with &lt;3</div>
     </div>
   )
 }

@@ -1,16 +1,8 @@
 import classNames from 'classnames'
+import { doc, firestore, getDoc } from 'common/firebase'
+import { useEffect, useState } from 'react'
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import styles from './index.module.scss'
-import { firestore, doc, getDoc } from '../../firebase'
-import { useState, useEffect } from 'react'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts'
 
 export interface TemplateTrendProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -23,7 +15,6 @@ const TemplateTrend = ({
   ...props
 }: TemplateTrendProps) => {
   const [trendData, setTrendData] = useState<any>([])
-  const data: any = []
 
   useEffect(() => {
     const loadTrend = async () => {
@@ -34,17 +25,19 @@ const TemplateTrend = ({
         const fetchedData = snapshot.data()
         const trend = fetchedData.trend
         const trendKeys = Object.keys(trend).sort()
-        trendKeys.forEach((key) => {
+        const data: any = []
+
+        trendKeys.forEach(key => {
           data.push({ timeInterval: key, numAnswers: trend[key] })
         })
+
         console.log(data)
         setTrendData(data)
       }
     }
 
     loadTrend()
-  }, [])
-  
+  }, [templateId])
 
   return trendData.length > 0 ? (
     <div className={classNames(styles.templateTrend, className)} {...props}>
@@ -58,7 +51,12 @@ const TemplateTrend = ({
         <YAxis />
         <Tooltip />
         <CartesianGrid stroke="#f5f5f5" />
-        <Line type="monotone" dataKey="numAnswers" stroke="#FC466B" yAxisId={0} />
+        <Line
+          type="monotone"
+          dataKey="numAnswers"
+          stroke="#FC466B"
+          yAxisId={0}
+        />
       </LineChart>
     </div>
   ) : null

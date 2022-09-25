@@ -1,9 +1,10 @@
+import Button from 'components/button'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import { useNavigate } from 'react-router-dom'
 import styles from './index.module.scss'
-import sbt from './sbt.png'
-import nft from './nft.png'
+import SBT from './sbt.png'
+import NFT from './nft.png'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -15,9 +16,12 @@ const LandingPage = () => {
         <div className={styles.description}>
           You can ask anything and get your replies on chain
         </div>
-        <div className={styles.button} onClick={() => navigate('/app')}>
-          Ask now
-        </div>
+        <Button
+          className={styles.button}
+          onClick={() => navigate('/templates')}
+        >
+          Ask your question now
+        </Button>
       </div>
       <div className={styles.cards}>
         <Card className={styles.card}>
@@ -37,6 +41,7 @@ const LandingPage = () => {
             <br />
             <br />
             Describe it and ask for endorsement!
+            <br />
           </div>
         </Card>
         <Card className={styles.card}>
@@ -51,33 +56,28 @@ const LandingPage = () => {
         <div className={styles.heading}>How you can use it?</div>
         <div className={styles.steps}>
           <div className={styles.step}>
-            Mint a new question as NFT
-            <br />
-            <br />
-            OR
-            <br />
-            <br />
-            Use existing NFT template
-            <div className={styles.squareLeft}>
-              <img src={nft} />
-            </div>
+            <p>Mint a new question as NFT</p>
+            <p>
+              <b>OR</b>
+            </p>
+            <p>Use existing NFT template</p>
+            <img className={styles.squareLeft} src={NFT} alt="NFT" />
           </div>
           <div className={styles.arrow} />
           <div className={styles.step}>
-            Send to your friend and let them reply (it's free!)
+            <p>Send to your friend and let them reply (it's free!)</p>
           </div>
           <div className={styles.arrow} />
           <div className={styles.step}>
-            Record the interaction reply with dynamic SBT
+            <p>Record the interaction reply with dynamic SBT</p>
             <br />
-            <br />
-            <small>
-              (SBT, or Soulbound Tokens, are non-transferrable NFT designed to
-              show your permenant credentials)
-            </small>
-            <div className={styles.squareRight}>
-              <img src={sbt} />
-            </div>
+            <p>
+              <small>
+                (SBT, or Soulbound Tokens, are non-transferrable NFT designed to
+                show your permenant credentials)
+              </small>
+            </p>
+            <img className={styles.squareRight} src={SBT} alt="SBT" />
           </div>
         </div>
       </div>

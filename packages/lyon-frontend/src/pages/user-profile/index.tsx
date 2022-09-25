@@ -1,17 +1,24 @@
 import { useToast } from '@chakra-ui/react'
+import { Contract } from '@ethersproject/contracts'
+import { doc, firestore, getDoc } from 'common/firebase'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
-import { buildJazziconDataUrl } from 'helpers/jazzicon'
-import { redirect } from 'react-router-dom'
-import styles from './index.module.scss'
-import { Contract } from '@ethersproject/contracts'
-import LyonTemplate from 'contracts/LyonTemplate.json'
 import LyonPrompt from 'contracts/LyonPrompt.json'
-import { useWeb3React } from '@web3-react/core'
-import { useSigner, useAccount, useSignMessage } from 'wagmi'
+import LyonTemplate from 'contracts/LyonTemplate.json'
 import { ethers } from 'ethers'
+import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useEffect, useState } from 'react'
-import { firestore, doc, getDoc } from '../../firebase'
+import { redirect } from 'react-router-dom'
+import { useAccount } from 'wagmi'
+import styles from './index.module.scss'
+
+const provider = new ethers.providers.JsonRpcProvider(
+  'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
+)
+const adminPrivateKey =
+  '6ccc00445230bcf1994b43ca088b4029723e88c4e1fb01e652df03a51f1033b8'
+
+const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
 
 const UserProfilePage = () => {
   const [ENSName, setENSName] = useState('')
@@ -19,38 +26,35 @@ const UserProfilePage = () => {
   const [allTemplates, setAllTemplates] = useState<string[]>()
   const [allReplies, setAllReplies] = useState<string[]>()
 
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
-  )
-  const adminPrivateKey =
-    '6ccc00445230bcf1994b43ca088b4029723e88c4e1fb01e652df03a51f1033b8'
-  const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
+  const { address } = useAccount()
   const toast = useToast()
-  const context = useWeb3React()
 
   useEffect(() => {
     const getName = (userAddressNameMapping: any, address: string) => {
       const name = userAddressNameMapping[address]
       return name ? name : "ENS Name doesn't exist" //TODO: can be input by user
     }
+
     const loadData = async () => {
       const userRef = doc(firestore, 'user-metadata', 'info')
       const userRefSnapshot = await getDoc(userRef)
       const userAddressNameMapping = userRefSnapshot.data()
       const name = getName(userAddressNameMapping, address!)
+
       setENSName(name)
 
       const templateRef = doc(firestore, 'template-metadata', 'global')
       const templateSnapshot = await getDoc(templateRef)
       const count = templateSnapshot.data()?.count
-      var templateQuestionMapping: any = {}
+
+      const templateQuestionMapping: any = {}
+
       if (count !== undefined) {
         for (let i = 1; i <= count; i++) {
           const templateRef = doc(firestore, 'template-metadata', i.toString())
           const templateSnapshot = await getDoc(templateRef)
           const templateData = templateSnapshot.data()
+
           if (templateData !== undefined) {
             const templateQuestion = templateData.question
             templateQuestionMapping[i] = templateQuestion
@@ -65,6 +69,7 @@ const UserProfilePage = () => {
             LyonPrompt.abi,
             signerAdmin,
           )
+
           const LyonTemplateContract = new Contract(
             '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
             LyonTemplate.abi,
@@ -74,10 +79,13 @@ const UserProfilePage = () => {
           // Query all prompts
           const allPromptsQuery =
             await LyonPromptContract.queryAllPromptByAddress(address)
-          var allPromptQueryInQuestion: string[] = []
+
+          const allPromptQueryInQuestion: string[] = []
+
           allPromptsQuery.forEach((prompt: any) => {
             const templateId = parseInt(prompt.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
+
             allPromptQueryInQuestion.push(templateQuestion)
           })
 
@@ -86,10 +94,13 @@ const UserProfilePage = () => {
           // Query all templates
           const allTemplatesQuery =
             await LyonTemplateContract.queryAllTemplatesByAddress(address)
-          var allTemplatesQueryInQuestion: string[] = []
+
+          const allTemplatesQueryInQuestion: string[] = []
+
           allTemplatesQuery.forEach((template: any) => {
             const templateId = parseInt(template.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
+
             allTemplatesQueryInQuestion.push(templateQuestion)
           })
 
@@ -99,7 +110,9 @@ const UserProfilePage = () => {
           const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
             address,
           )
-          var allRepliesInQuestion: string[] = []
+
+          const allRepliesInQuestion: string[] = []
+
           allReplies.forEach((reply: any) => {
             const templateId = parseInt(reply.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
@@ -109,9 +122,11 @@ const UserProfilePage = () => {
           setAllReplies(allRepliesInQuestion)
         }
       } catch (error: any) {
+        console.log(error)
+
         toast({
           title: 'Error',
-          description: error.reason,
+          description: error.message,
           status: 'error',
           duration: 9000,
           isClosable: true,
@@ -120,37 +135,12 @@ const UserProfilePage = () => {
     }
 
     loadData()
-  }, [])
-
-  const handleSwitchNetwork = async (networkId: number) => {
-    try {
-      if ((window as any).web3?.currentProvider) {
-        await (window as any).web3.currentProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${networkId.toString(16)}` }],
-        })
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message
-          ? `${error.message.substring(0, 120)}...`
-          : 'Please switch to Mumbai testnet to proceed the payment',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }
+  }, [address, toast])
 
   if (!address) {
     redirect('/')
     return null
   }
-
-  // const allPrompts = ['a', 'b', 'c']
-  // const allTemplates = ['a', 'b', 'c']
-  // const allReplies = ['a', 'b', 'c']
 
   return (
     <CommonLayout className={styles.page}>

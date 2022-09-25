@@ -1,39 +1,40 @@
-import classNames from 'classnames'
-import Card from 'components/card'
-import CommonLayout from 'components/common-layout'
-import { useEffect, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
-import styles from './index.module.scss'
 import {
-  firestore,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  useToast,
+} from '@chakra-ui/react'
+import { Contract } from '@ethersproject/contracts'
+import classNames from 'classnames'
+import {
+  arrayUnion,
   doc,
+  firestore,
   getDoc,
   serverTimestamp,
   updateDoc,
-  arrayUnion,
-} from '../../firebase'
-import { useToast } from '@chakra-ui/react'
-import { useWeb3React } from '@web3-react/core'
-import { useSigner, useAccount, useSignMessage } from 'wagmi'
-import QuestionCards from 'components/question-cards'
-import { ethers } from 'ethers'
-import { Contract } from '@ethersproject/contracts'
+} from 'common/firebase'
+import Button from 'components/button'
+import Card from 'components/card'
+import CommonLayout from 'components/common-layout'
+import TemplateCardList from 'components/template-card-list'
 import LyonPrompt from 'contracts/LyonPrompt.json'
-import { getDefaultProvider } from '@ethersproject/providers'
-import Popup from 'components/popup'
+import { ethers } from 'ethers'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
+import { useAccount, useSigner, useSignMessage } from 'wagmi'
+import styles from './index.module.scss'
 
 const REPLY_TYPES = ['Yes', 'No', "I don 't know"]
 
 const NotReplied = () => {
   const [comment, setComment] = useState('')
   const [replyType, setReplyType] = useState(REPLY_TYPES[0])
-  const [buttonPopup, setButtonPopup] = useState(false)
-  const [mintConfirm, setMintConfirm] = useState(false)
-  const handleClick = () => {
-    if (mintConfirm != true) {
-      setMintConfirm(current => !current)
-    }
-  }
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
   const [questionNumAnswers, setQuestionNumAnswers] = useState(0)
@@ -42,15 +43,15 @@ const NotReplied = () => {
   const [signatureHash, setSignatureHash] = useState('')
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const toast = useToast()
-  const context = useWeb3React()
-  const { data, error, signMessage } = useSignMessage({
+
+  const { signMessage } = useSignMessage({
     onSuccess(data, variables) {
       setSignatureHash(data)
-      setButtonPopup(true)
+      setIsAlertOpen(true)
       // Verify signature when sign message succeedsconst address = verifyMessage(variables.message, data)
     },
     onError(error) {
-      setButtonPopup(false)
+      setIsAlertOpen(false)
       toast({
         title: 'Error',
         description: 'Sign failed',
@@ -60,15 +61,16 @@ const NotReplied = () => {
       })
     },
   })
-  // const { library, account, chainId } = context
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
+
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
 
   const provider = new ethers.providers.JsonRpcProvider(
     'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
   )
   const adminPrivateKey =
     '6ccc00445230bcf1994b43ca088b4029723e88c4e1fb01e652df03a51f1033b8'
+
   const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
 
   const getName = (userAddressNameMapping: any, address: string) => {
@@ -106,7 +108,7 @@ const NotReplied = () => {
     }
 
     loadPromptData()
-  }, [])
+  }, [id, templateId])
 
   const handleReply = async () => {
     try {
@@ -119,6 +121,7 @@ const NotReplied = () => {
           LyonPrompt.abi,
           signerAdmin,
         )
+
         const ReplyPromptResponse = await LyonPromptContract.replyPrompt(
           [templateId, id],
           address,
@@ -126,11 +129,13 @@ const NotReplied = () => {
           comment,
           signatureHash,
         )
+
         console.log(ReplyPromptResponse)
 
         const promptRef = doc(firestore, 'prompt-metadata', templateId!)
         const promptSnapshot = await getDoc(promptRef)
         const promptFetchedData = promptSnapshot.data()?.[id!]
+
         if (promptFetchedData !== undefined) {
           const replyData = {
             comment: comment,
@@ -140,9 +145,11 @@ const NotReplied = () => {
           }
 
           const keysList = promptFetchedData.keys
+
           if (!keysList.includes(address)) {
             keysList.push(address)
           }
+
           const updateReplyData = {
             ...promptFetchedData,
             keys: keysList,
@@ -151,6 +158,7 @@ const NotReplied = () => {
               [address!]: replyData,
             },
           }
+
           updateDoc(promptRef, {
             [id!]: updateReplyData,
           })
@@ -159,6 +167,7 @@ const NotReplied = () => {
         const templateRef = doc(firestore, 'template-metadata', templateId!)
         const templateSnapshot = await getDoc(templateRef)
         const templateFetchedData = templateSnapshot.data()?.connections
+
         if (templateFetchedData !== undefined) {
           updateDoc(templateRef, {
             connections: arrayUnion({
@@ -178,6 +187,8 @@ const NotReplied = () => {
       })
     }
   }
+
+  const cancelRef = useRef(null)
 
   return (
     <CommonLayout className={styles.page}>
@@ -208,17 +219,43 @@ const NotReplied = () => {
           onChange={event => setComment(event.target.value.replace(/\n/g, ''))}
         />
         <div className={styles.buttons}>
-          <div className={styles.cancel} onClick={() => window.history.back()}>
+          <Button
+            className={styles.cancel}
+            variant="secondary"
+            onClick={() => window.history.back()}
+          >
             Cancel
-          </div>
-          <div className={styles.confirm} onClick={() => handleReply()}>
+          </Button>
+          <Button
+            className={styles.confirm}
+            variant="primary"
+            onClick={() => handleReply()}
+          >
             Sign your reply
-          </div>
-          <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-            <h1 style={{ fontSize: '20px', fontFamily: 'Ubuntu' }}>
-              Reply Success - Congrats!
-            </h1>
-          </Popup>
+          </Button>
+          <AlertDialog
+            isOpen={isAlertOpen}
+            onClose={() => setIsAlertOpen(false)}
+            leastDestructiveRef={cancelRef}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Reply Success - Congrats!
+                </AlertDialogHeader>
+
+                <AlertDialogBody>
+                  Now you may ask some other questions!
+                </AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button size="medium" onClick={() => setIsAlertOpen(false)}>
+                    Nice!
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
         </div>
       </Card>
     </CommonLayout>
@@ -233,7 +270,7 @@ const Replied = () => {
         Now you can see some other popular questions on Lyon...
       </div>
       <div className={styles.questionList}>
-        <QuestionCards />
+        <TemplateCardList />
       </div>
     </CommonLayout>
   )
