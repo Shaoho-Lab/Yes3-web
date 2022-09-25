@@ -51,6 +51,10 @@ const PromptRequesterViewPage = () => {
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
 
   const handleMintPrompt = async () => {
+    const getName = (userAddressNameMapping: any, address: string) => {
+      const name = userAddressNameMapping[address]
+      return name ? name : address
+    }
     try {
       const uri = await HTML2PNG2IPFS()
 
@@ -69,19 +73,17 @@ const PromptRequesterViewPage = () => {
 
         const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
         const promptSnapshot = await getDoc(promptMetadataRef)
-
         if (promptSnapshot.exists()) {
-          var checnRepliesData: any = {}
+          var checkRepliesData: any = {}
           checked.forEach(item => {
             const key = item.split(':')[0]
             const value = item.split(':').slice(1).join(':')
-            const name = userAddressNameMapping[key]
-
-            checnRepliesData[name] = value
+            const name = getName(userAddressNameMapping, key)
+            checkRepliesData[name] = value
           })
           const promptData = {
-            chosenReplies: checnRepliesData, // TODO add checked Data
             ...promptSnapshot.data()[id!],
+            chosenReplies: checkRepliesData, // TODO add checked Data
           }
           updateDoc(promptMetadataRef, {
             [id!]: promptData,

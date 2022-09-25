@@ -175,8 +175,6 @@ const TemplateViewPage = () => {
         setIsSuccessModalOpen(true)
       }
     } catch (error: any) {
-      console.log(error)
-
       toast({
         title: 'Ask Error',
         description: error.message,
