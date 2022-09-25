@@ -22,6 +22,7 @@ const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
 
 const UserProfilePage = () => {
   const [ENSName, setENSName] = useState('')
+  const [LensName, setLensName] = useState('')
   const [allPrompts, setAllPrompts] = useState<PromptStruct[]>()
   const [allTemplates, setAllTemplates] = useState<TemplateStruct[]>()
   const [allReplies, setAllReplies] = useState<PromptStruct[]>()
@@ -44,6 +45,7 @@ const UserProfilePage = () => {
       const name = getName(userAddressNameMapping, address!)
 
       setENSName(name)
+      setLensName(name.slice(0, -4))
 
       const templateRef = doc(firestore, 'template-metadata', 'global')
       const templateSnapshot = await getDoc(templateRef)
@@ -149,7 +151,14 @@ const UserProfilePage = () => {
           alt={address}
         />
         <div className={styles.identity}>
-          <div className={styles.name}>{ENSName}</div>
+          <div
+            className={styles.name}
+            onClick={() =>
+              window.open(`http://www.lensfrens.xyz/${LensName}.lens`)
+            }
+          >
+            {ENSName}
+          </div>
           <a href={'https://rainbow.me/' + address} className={styles.address}>
             {address}
           </a>
