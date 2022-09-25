@@ -17,6 +17,8 @@ import {
 import { useNavigate } from 'react-router-dom'
 import Popup from 'components/popup'
 import NFTMintBox from 'components/NFTMintBox'
+import { NFTStorage, File } from 'nft.storage'
+import * as htmlToImage from 'html-to-image'
 
 const TemplateCreatePage = () => {
   const [templateQuestion, setTemplateQuestion] = useState('')
@@ -25,6 +27,7 @@ const TemplateCreatePage = () => {
   const [buttonPopup, setButtonPopup] = useState(false)
   const [mintConfirm, setMintConfirm] = useState(false)
   const [chainId, setChainId] = useState(80001)
+  const [uri, setUri] = useState('')
 
   const navigate = useNavigate()
   const toast = useToast()
@@ -67,7 +70,55 @@ const TemplateCreatePage = () => {
     }
   }
 
+  const client = new NFTStorage({
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
+  })
+
+  async function upload2IPFS(img: BlobPart) {
+    const metadata = await client.store({
+      name: 'Yes3',
+      description:
+        'Mint your social interactions on-chain! Powered by Lyon with <3',
+      image: new File([img], 'test.png', { type: 'image/png' }),
+    })
+    console.log(metadata.url)
+    setUri(metadata.url)
+  }
+
+  const HTML2PNG2IPFS = () => {
+    console.log('mint clicked')
+    var node = document.getElementById('NFTMint')
+    htmlToImage
+      .toPng(node!)
+      .then(function (dataUrl) {
+        // convert to file
+        var img = dataURLtoFile(dataUrl, 'image')
+        upload2IPFS(img)
+      })
+      .catch(function (error) {
+        console.error('oops, something went wrong!', error)
+      })
+  }
+
+  const dataURLtoFile = (dataUrl: string, filename: string) => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)?.[1]
+    const bstr = window.atob(arr[1])
+
+    let n = bstr.length
+    let u8arr = new Uint8Array(n)
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+
+    return new File([u8arr], filename, { type: mime })
+  }
+
   const handleMintTemplate = async () => {
+    HTML2PNG2IPFS()
+    console.log(uri)
     try {
       if (provider && signer && chainId) {
         if (chainId !== 80001) {

@@ -26,51 +26,6 @@ import LyonPrompt from 'contracts/LyonPrompt.json'
 import LyonTemplate from 'contracts/LyonTemplate.json'
 import { ethers } from 'ethers'
 
-const client = new NFTStorage({
-  token:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
-})
-
-async function upload2IPFS(img: BlobPart) {
-  const metadata = await client.store({
-    name: 'Yes3',
-    description:
-      'Mint your social interactions on-chain! Powered by Lyon with <3',
-    image: new File([img], 'test.png', { type: 'image/png' }),
-  })
-  console.log(metadata.url)
-}
-
-const HTML2PNG2IPFS = () => {
-  console.log('mint clicked')
-  var node = document.getElementById('NFTSBT')
-  htmlToImage
-    .toPng(node!)
-    .then(function (dataUrl) {
-      // convert to file
-      var img = dataURLtoFile(dataUrl, 'image')
-      upload2IPFS(img)
-    })
-    .catch(function (error) {
-      console.error('oops, something went wrong!', error)
-    })
-}
-
-const dataURLtoFile = (dataUrl: string, filename: string) => {
-  const arr = dataUrl.split(',')
-  const mime = arr[0].match(/:(.*?);/)?.[1]
-  const bstr = window.atob(arr[1])
-
-  let n = bstr.length
-  let u8arr = new Uint8Array(n)
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-
-  return new File([u8arr], filename, { type: mime })
-}
-
 const Edit = () => {
   const [question, setQuestion] = useState('')
   const [questionContext, setQuestionContext] = useState('')
@@ -82,10 +37,56 @@ const Edit = () => {
   const [commentList, setCommentList] = useState<string[][]>()
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
   const [comment, setComment] = useState('')
-
+  const [uri, setUri] = useState('')
   const { data: signer, isError, isLoading } = useSigner()
   const { address, isConnecting, isDisconnected } = useAccount()
   const toast = useToast()
+
+  const client = new NFTStorage({
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
+  })
+
+  async function upload2IPFS(img: BlobPart) {
+    const metadata = await client.store({
+      name: 'Yes3',
+      description:
+        'Mint your social interactions on-chain! Powered by Lyon with <3',
+      image: new File([img], 'test.png', { type: 'image/png' }),
+    })
+    console.log(metadata.url)
+    setUri(metadata.url)
+  }
+
+  const HTML2PNG2IPFS = () => {
+    console.log('mint clicked')
+    var node = document.getElementById('NFTSBT')
+    htmlToImage
+      .toPng(node!)
+      .then(function (dataUrl) {
+        // convert to file
+        var img = dataURLtoFile(dataUrl, 'image')
+        upload2IPFS(img)
+      })
+      .catch(function (error) {
+        console.error('oops, something went wrong!', error)
+      })
+  }
+
+  const dataURLtoFile = (dataUrl: string, filename: string) => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)?.[1]
+    const bstr = window.atob(arr[1])
+
+    let n = bstr.length
+    let u8arr = new Uint8Array(n)
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+
+    return new File([u8arr], filename, { type: mime })
+  }
 
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const provider = new ethers.providers.JsonRpcProvider(
@@ -168,7 +169,7 @@ const Edit = () => {
 
         const setTokenURIResponse = await LyonPromptContract.setTokenURI(
           [templateId, id],
-          '', // TODO add updated TokenURI
+          uri,
         )
         console.log('setTokenURIResponse', setTokenURIResponse)
 
@@ -252,7 +253,7 @@ const Edit = () => {
       <div className={styles.container}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={['asdasd']} />
+            <NFTSBTBox question={question} replyShow={['abc']} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>

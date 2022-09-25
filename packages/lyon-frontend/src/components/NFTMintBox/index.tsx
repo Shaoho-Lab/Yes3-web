@@ -14,11 +14,9 @@ const NFTMintBox = ({
   ...props
 }: NFTMintBoxProps) => {
   return (
-    <div className={styles.body} id="NFTSBTMint">
+    <div className={styles.body} id="NFTMint">
       <h5>{question}</h5>
-      <a href="www.google.com" color="white">
-        {replyShow}
-      </a>
+      <a color="white">{replyShow}</a>
       <h6>Powered by Lyon with &lt;3</h6>
     </div>
   )
