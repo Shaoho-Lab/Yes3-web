@@ -151,7 +151,9 @@ const UserProfilePage = () => {
         />
         <div className={styles.identity}>
           <div className={styles.name}>{ENSName}</div>
-          <div className={styles.address}>{address}</div>
+          <a href={'https://rainbow.me/' + address} className={styles.address}>
+            {address}
+          </a>
         </div>
       </Card>
       <div className={styles.heading}>My Prompts</div>
@@ -161,9 +163,7 @@ const UserProfilePage = () => {
             <Card
               className={styles.comment}
               onClick={() =>
-                navigate(
-                  `/prompts/${item.templateId}/${item.promptId}/sender`,
-                )
+                navigate(`/prompts/${item.templateId}/${item.promptId}/sender`)
               }
             >
               <span>{item.question}</span>
