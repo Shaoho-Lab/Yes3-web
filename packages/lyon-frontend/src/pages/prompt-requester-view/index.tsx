@@ -101,7 +101,7 @@ const PromptRequesterViewPage = () => {
 
         const setTokenURIResponse = await LyonPromptContract.setTokenURI(
           [templateId, id],
-          '', // TODO add updated TokenURI
+          uri,
         )
         console.log('setTokenURIResponse', setTokenURIResponse)
 
@@ -109,7 +109,7 @@ const PromptRequesterViewPage = () => {
         const promptSnapshot = await getDoc(promptMetadataRef)
 
         if (promptSnapshot.exists()) {
-          var checnRepliesData:any = {}
+          var checnRepliesData: any = {}
           checked.forEach(item => {
             const key = item.split(':')[0]
             const value = item.split(':').slice(1).join(':')

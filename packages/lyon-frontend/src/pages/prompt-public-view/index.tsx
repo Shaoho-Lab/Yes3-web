@@ -242,7 +242,7 @@ const PromptPublicViewPage = () => {
           chosenReplies: {},
           keys: [],
           createTime: serverTimestamp(),
-          SBTURI: '', // TODO add SBT uri
+          SBTURI: uri, // TODO add SBT uri
         }
 
         if (promptSnapshot.exists()) {
