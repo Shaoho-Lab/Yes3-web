@@ -13,8 +13,9 @@ const NFTSBTMintBox = ({
 }: NFTSBTMintBoxProps) => {
   return (
     <div
-      className={classNames(styles.NFTSBTMintBox, className)}
       id="NFTSBTMint"
+      className={classNames(styles.NFTSBTMintBox, className)}
+      {...props}
     >
       <div className={styles.question}>{question}</div>
       <div className={styles.powerBy}>Powered by Lyon with &lt;3</div>

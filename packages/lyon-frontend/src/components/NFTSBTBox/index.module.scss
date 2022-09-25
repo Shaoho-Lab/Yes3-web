@@ -1,35 +1,61 @@
-:root{
-  --primary:#FC466B;
-  --secondary:#3F5EFB;
-}
-.body{
-  height:700px;
-  width:700px;
-  margin:0;
-  display: grid;
-  place-items:center;
-  place-content:center;
- background:linear-gradient(135deg, var(--primary),var(--secondary));
- background-size: 700px 700px;
-}
+.NFTSBTBox {
+  background: linear-gradient(135deg, #fc466b, #3f5efb);
 
-.padding{
-  margin:10px;
-}
+  height: 400px;
+  width: 400px;
 
-h5{
-  font-family:"ubuntu";
-  font-size: 4.5rem;
-  color: white;
-  margin-left: 30px;
-}
-
-h6{
-  font-family:"ubuntu";
-  font-size: 3 rem;
-  color: white;
   position: relative;
-  right: -10rem;
-  bottom:-6rem;
-  padding-right: 20;
+
+  .question {
+    position: absolute;
+
+    top: 0;
+    bottom: 150px;
+    left: 0;
+    right: 0;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Ubuntu';
+    font-size: 38px;
+    font-weight: bold;
+    color: white;
+
+    line-height: 1.2;
+  }
+
+  .replies {
+    position: absolute;
+
+    left: 20px;
+    right: 20px;
+    bottom: 0;
+    height: 150px;
+
+    text-align: right;
+
+    .reply {
+      font-family: 'Ubuntu';
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+    }
+  }
+
+  .powerBy {
+    font-family: 'Ubuntu';
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+
+    position: absolute;
+
+    bottom: 20px;
+    right: 20px;
+  }
 }

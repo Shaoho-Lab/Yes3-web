@@ -13,17 +13,20 @@ const NFTSBTBox = ({
   ...props
 }: NFTSBTBoxProps) => {
   return (
-    <div className={classNames(styles.body, className)} id="NFTSBT">
-      <h5>{question}</h5>
-      <div className="list-container">
+    <div
+      id="NFTSBT"
+      className={classNames(styles.NFTSBTBox, className)}
+      {...props}
+    >
+      <div className={styles.question}>{question}</div>
+      <div className={styles.replies}>
         {replyShow?.map((item, index) => (
-          <div key={index}>
-            <a color="white">{item}</a>
+          <div key={index} className={styles.reply}>
+            {item}
           </div>
         ))}
       </div>
-
-      <h6>Powered by Lyon with &lt;3</h6>
+      <div className={styles.powerBy}>Powered by Lyon with &lt;3</div>
     </div>
   )
 }
