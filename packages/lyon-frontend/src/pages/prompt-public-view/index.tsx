@@ -122,7 +122,7 @@ const PromptPublicViewPage = () => {
             const name = getName(userAddressNameMapping, key)
             const value = chosenReplies[key]
 
-            chosenRepliesTemp.push(name + ': ' + value.replierDetail)
+            chosenRepliesTemp.push(name + ': ' + value)
           }
 
           setChosenRepliesList(chosenRepliesTemp)

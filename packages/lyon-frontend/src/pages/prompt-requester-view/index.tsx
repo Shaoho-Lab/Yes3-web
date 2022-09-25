@@ -136,7 +136,7 @@ const PromptRequesterViewPage = () => {
           for (let key of Object.keys(replies)) {
             const name = getName(userAddressNameMapping, key)
             const value = replies[key]
-            commentListTemp.push(name + ': ' + value.comment)
+            commentListTemp.push(name + ': ' + value.replierDetail + ', and ' + value.comment)
           }
 
           setCommentList(commentListTemp)

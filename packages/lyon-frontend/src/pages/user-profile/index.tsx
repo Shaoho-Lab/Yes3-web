@@ -150,7 +150,9 @@ const UserProfilePage = () => {
         />
         <div className={styles.identity}>
           <div className={styles.name}>{ENSName}</div>
-          <div className={styles.address}>{address}</div>
+          <a href={'https://rainbow.me/' + address} className={styles.address}>
+            {address}
+          </a>
         </div>
       </Card>
       <div className={styles.heading}>Prompts</div>
