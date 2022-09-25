@@ -71,7 +71,7 @@ const TemplateCreatePage = () => {
         const uri = await HTML2PNG2IPFS()
 
         const LyonTemplateContract = new Contract(
-          '0xdb9D6157400ccc0F838Ef89746F2B4374abb77E5',
+          '0x115ca26551A4f2B9243BBf9bF117157B39140040',
           LyonTemplate.abi,
           signer,
         )
