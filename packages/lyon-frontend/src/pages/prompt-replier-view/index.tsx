@@ -24,7 +24,7 @@ import TemplateCardList from 'components/template-card-list'
 import LyonPrompt from 'contracts/LyonPrompt.json'
 import { ethers } from 'ethers'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useAccount, useSigner, useSignMessage } from 'wagmi'
 import styles from './index.module.scss'
 
@@ -42,7 +42,9 @@ const NotReplied = () => {
   const [requesterName, setRequesterName] = useState('')
   const [signatureHash, setSignatureHash] = useState('')
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
+
   const toast = useToast()
+  const navigate = useNavigate()
 
   const { signMessage } = useSignMessage({
     onSuccess(data, variables) {
@@ -249,8 +251,11 @@ const NotReplied = () => {
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button size="medium" onClick={() => setIsAlertOpen(false)}>
-                    Nice!
+                  <Button
+                    size="medium"
+                    onClick={() => navigate(`/prompts/${templateId}/${id}`)}
+                  >
+                    Go to comments
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>

@@ -224,10 +224,20 @@ const TemplateViewPage = () => {
               <ModalBody>
                 <p>Your question prompt SBT has been minted!</p>
                 <p>Share this link to your friends for reply:</p>
+                <br></br>
                 <p>
-                  <a href={'/prompts/' + templateId + '/' + questionNumAnswers}>
-                    https://yes3.app/prompts/{templateId}/{questionNumAnswers}
-                    /reply
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={
+                      '/prompts/' +
+                      templateId +
+                      '/' +
+                      questionNumAnswers +
+                      '/reply'
+                    }
+                  >
+                    {`https://yes3.app/prompts/${templateId}/${questionNumAnswers}/reply`}
                   </a>
                 </p>
               </ModalBody>
