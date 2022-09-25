@@ -39,14 +39,14 @@ import {
 } from 'firebase/storage'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyA1duIais2Ajh1Bb_RJEpvohIFtVV_7_iM',
-  authDomain: 'lyon-protocol.firebaseapp.com',
-  projectId: 'lyon-protocol',
-  storageBucket: 'lyon-protocol.appspot.com',
-  messagingSenderId: '1068234459652',
-  appId: '1:1068234459652:web:24a1a911abf6ef55b7c351',
-  measurementId: 'G-2G4XBVEFNG',
-}
+  apiKey: "AIzaSyCJJZE0JC-lsrZD_CSReuRY9rJXgkT26z8",
+  authDomain: "yes3-84f98.firebaseapp.com",
+  projectId: "yes3-84f98",
+  storageBucket: "yes3-84f98.appspot.com",
+  messagingSenderId: "919227672022",
+  appId: "1:919227672022:web:62be9be2b60df320acf077",
+  measurementId: "G-G08T4JSXMB"
+};
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)

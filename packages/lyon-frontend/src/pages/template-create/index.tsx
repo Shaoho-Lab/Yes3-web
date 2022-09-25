@@ -93,7 +93,7 @@ const TemplateCreatePage = () => {
     try {
       if (signer) {
         const LyonTemplateContract = new Contract(
-          '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
+          '0xB6D2be364f94FFc9aC902066fdB59DB8Aa176D8A',
           LyonTemplate.abi,
           signer,
         )

@@ -68,13 +68,13 @@ const UserProfilePage = () => {
       try {
         if (signerAdmin) {
           const LyonPromptContract = new Contract(
-            '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
+            '0xBE7F59766e1ff6959ADE04163a2682D49fA3b57e',
             LyonPrompt.abi,
             signerAdmin,
           )
 
           const LyonTemplateContract = new Contract(
-            '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
+            '0xB6D2be364f94FFc9aC902066fdB59DB8Aa176D8A',
             LyonTemplate.abi,
             signerAdmin,
           )
@@ -162,7 +162,7 @@ const UserProfilePage = () => {
               className={styles.comment}
               onClick={() =>
                 navigate(
-                  `/prompts/${item.templateId}/${item.promptId}/${address}`,
+                  `/prompts/${item.templateId}/${item.promptId}/sender`,
                 )
               }
             >
