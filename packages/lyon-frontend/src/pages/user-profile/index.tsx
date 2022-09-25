@@ -67,13 +67,13 @@ const UserProfilePage = () => {
       try {
         if (signerAdmin) {
           const LyonPromptContract = new Contract(
-            '0xBE7F59766e1ff6959ADE04163a2682D49fA3b57e',
+            '0xCd2DE63538C88a873cF0abCc21818a165C106Be9',
             LyonPrompt.abi,
             signerAdmin,
           )
 
           const LyonTemplateContract = new Contract(
-            '0xB6D2be364f94FFc9aC902066fdB59DB8Aa176D8A',
+            '0xdb9D6157400ccc0F838Ef89746F2B4374abb77E5',
             LyonTemplate.abi,
             signerAdmin,
           )
