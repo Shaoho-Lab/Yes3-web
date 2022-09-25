@@ -150,7 +150,7 @@ const PromptPublicViewPage = () => {
   }
 
   const HTML2PNG2IPFS = async () => {
-    const node = document.getElementById('NFTSBT')
+    const node = document.getElementById('NFTSBTMint')
     const dataUrl = await htmlToImage.toJpeg(node!)
     const img = dataURLtoFile(dataUrl, 'image/jpeg')
 
