@@ -9,8 +9,7 @@ import LyonTemplate from 'contracts/LyonTemplate.json'
 import { ethers } from 'ethers'
 import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useEffect, useState } from 'react'
-import { redirect, useNavigate } from 'react-router-dom'
-import { useAccount } from 'wagmi'
+import { redirect, useNavigate, useParams } from 'react-router-dom'
 import styles from './index.module.scss'
 
 const provider = new ethers.providers.JsonRpcProvider(
@@ -27,7 +26,7 @@ const UserProfilePage = () => {
   const [allTemplates, setAllTemplates] = useState<TemplateStruct[]>()
   const [allReplies, setAllReplies] = useState<PromptStruct[]>()
 
-  const { address } = useAccount()
+  const { address } = useParams<{ address: string }>()
 
   const toast = useToast()
   const navigate = useNavigate()
@@ -142,7 +141,7 @@ const UserProfilePage = () => {
 
   return (
     <CommonLayout className={styles.page}>
-      <div className={styles.heading}>My Profile</div>
+      <div className={styles.heading}>Profile</div>
       <Card className={styles.info}>
         <img
           className={styles.jazzicon}
@@ -154,16 +153,14 @@ const UserProfilePage = () => {
           <div className={styles.address}>{address}</div>
         </div>
       </Card>
-      <div className={styles.heading}>My Prompts</div>
+      <div className={styles.heading}>Prompts</div>
       <div className="list-container">
         {allPrompts?.map((item, index) => (
           <div key={index}>
             <Card
               className={styles.comment}
               onClick={() =>
-                navigate(
-                  `/prompts/${item.templateId}/${item.promptId}/sender`,
-                )
+                navigate(`/prompts/${item.templateId}/${item.promptId}/sender`)
               }
             >
               <span>{item.question}</span>
@@ -171,7 +168,7 @@ const UserProfilePage = () => {
           </div>
         ))}
       </div>
-      <div className={styles.heading}>My Question Templates</div>
+      <div className={styles.heading}>Question Templates</div>
       <div className="list-container">
         {allTemplates?.map((item, index) => (
           <div key={index}>
@@ -184,7 +181,7 @@ const UserProfilePage = () => {
           </div>
         ))}
       </div>
-      <div className={styles.heading}>My Given Replies</div>
+      <div className={styles.heading}>Given Replies</div>
       <div className="list-container">
         {allReplies?.map((item, index) => (
           <div key={index}>
