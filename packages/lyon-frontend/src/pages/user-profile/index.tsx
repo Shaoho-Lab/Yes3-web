@@ -1,6 +1,7 @@
 import { useToast } from '@chakra-ui/react'
 import { Contract } from '@ethersproject/contracts'
 import { doc, firestore, getDoc } from 'common/firebase'
+import Button from 'components/button'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import LyonPrompt from 'contracts/LyonPrompt.json'
@@ -8,7 +9,7 @@ import LyonTemplate from 'contracts/LyonTemplate.json'
 import { ethers } from 'ethers'
 import { buildJazziconDataUrl } from 'helpers/jazzicon'
 import { useEffect, useState } from 'react'
-import { redirect } from 'react-router-dom'
+import { redirect, useNavigate } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 import styles from './index.module.scss'
 
@@ -28,6 +29,7 @@ const UserProfilePage = () => {
 
   const { address } = useAccount()
   const toast = useToast()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getName = (userAddressNameMapping: any, address: string) => {
@@ -156,7 +158,10 @@ const UserProfilePage = () => {
       <div className="list-container">
         {allPrompts?.map((item, index) => (
           <div key={index}>
-            <Card className={styles.comment}>
+            <Card
+              className={styles.comment}
+              onClick={e => navigate(`prompts/$`)}
+            >
               <span>{item}</span>
             </Card>
           </div>
