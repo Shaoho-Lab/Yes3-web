@@ -93,6 +93,8 @@
   }
 
   .buttons {
+    margin-bottom: 30px;
+
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -109,49 +111,36 @@
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    gap: 40px;
-    padding-bottom: 40px;
 
-    .comment {
-      flex: 1;
-      flex-grow: 4;
-      height: 50px;
-      font-size: 22px;
-    }
+    margin-bottom: 40px;
+
     .image {
       flex: 1;
     }
-    .title {
-      font-size: 32px;
-      font-weight: bold;
 
-      margin-bottom: 20px;
+    .comments {
+      margin-left: 40px;
+
+      .title {
+        font-size: 32px;
+        font-weight: bold;
+
+        margin-bottom: 20px;
+      }
+
+      .comment {
+        user-select: none;
+        cursor: pointer;
+
+        padding: 10px 20px;
+        margin-top: 10px;
+        font-size: 18px;
+
+        &.selected {
+          background-color: #5856d6;
+          color: #ffffff;
+        }
+      }
     }
-  }
-}
-
-input[type='checkbox'] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  /* create custom checkbox appearance */
-  display: inline-block;
-  width: 44px;
-  height: 44px;
-  padding: 10px;
-  /* background-color only for content */
-  background-clip: content-box;
-  border: 1.5px solid #bbbbbb;
-  border-radius: 6px;
-  background-color: #e7e6e7;
-  margin-left: 15px;
-  margin-right: 15px;
-
-  &:checked {
-    background-color: black;
-  }
-
-  &:focus {
-    outline: none !important;
   }
 }

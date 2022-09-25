@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { Contract } from '@ethersproject/contracts'
+import classNames from 'classnames'
 import { doc, firestore, getDoc, updateDoc } from 'common/firebase'
 import Button from 'components/button'
 import Card from 'components/card'
@@ -48,19 +49,6 @@ const PromptRequesterViewPage = () => {
   }
 
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
-
-  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    var updatedList: string[] = [...checked]
-    if (event.target.checked) {
-      updatedList = [...checked, event.target.value]
-    } else {
-      updatedList.splice(checked.indexOf(event.target.value), 1)
-    }
-    setChecked(updatedList)
-  }
-
-  const isChecked = (item: string) =>
-    checked.includes(item) ? 'checked-item' : 'not-checked-item'
 
   const handleMintPrompt = async () => {
     try {
@@ -176,13 +164,19 @@ const PromptRequesterViewPage = () => {
               <div className="list-container">
                 {commentList?.map((item, index) => (
                   <div key={index}>
-                    <Card className={styles.comment}>
-                      <input
-                        value={item}
-                        type="checkbox"
-                        onChange={handleCheck}
-                      />
-                      <span className={isChecked(item[0])}>{item}</span>
+                    <Card
+                      className={classNames(styles.comment, {
+                        [styles.selected]: checked.includes(item),
+                      })}
+                      onClick={() => {
+                        if (checked.includes(item)) {
+                          setChecked(checked.filter(x => x !== item))
+                        } else {
+                          setChecked(checked.concat(item))
+                        }
+                      }}
+                    >
+                      {item}
                     </Card>
                   </div>
                 ))}
