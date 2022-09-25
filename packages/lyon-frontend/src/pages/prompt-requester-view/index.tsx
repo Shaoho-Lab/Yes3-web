@@ -162,14 +162,14 @@ const Edit = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+          '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signer,
         )
 
         const setTokenURIResponse = await LyonPromptContract.setTokenURI(
           [templateId, id],
-          uri,
+          '', // TODO add updated TokenURI
         )
         console.log('setTokenURIResponse', setTokenURIResponse)
 
@@ -253,7 +253,7 @@ const Edit = () => {
       <div className={styles.container}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={['abc']} />
+            <NFTSBTBox question={question} replyShow={['asdasd']} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>
@@ -266,7 +266,7 @@ const Edit = () => {
                   <div key={index}>
                     <Card className={styles.comment}>
                       <input
-                        value={item[0]}
+                        value={item}
                         type="checkbox"
                         onChange={handleCheck}
                       />

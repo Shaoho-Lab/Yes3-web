@@ -61,71 +61,52 @@ const UserProfilePage = () => {
       try {
         if (signerAdmin) {
           const LyonPromptContract = new Contract(
-            '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+            '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
             LyonPrompt.abi,
             signerAdmin,
           )
           const LyonTemplateContract = new Contract(
-            '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
+            '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
             LyonTemplate.abi,
             signerAdmin,
           )
 
+          // Query all prompts
           const allPromptsQuery =
             await LyonPromptContract.queryAllPromptByAddress(address)
+          var allPromptQueryInQuestion: string[] = []
+          allPromptsQuery.forEach((prompt: any) => {
+            const templateId = parseInt(prompt.templateId._hex)
+            const templateQuestion = templateQuestionMapping![templateId]
+            allPromptQueryInQuestion.push(templateQuestion)
+          })
 
-          //TODO: debug why there is error when using this
+          setAllPrompts(allPromptQueryInQuestion)
+
+          // Query all templates
+          const allTemplatesQuery =
+            await LyonTemplateContract.queryAllTemplatesByAddress(address)
           var allTemplatesQueryInQuestion: string[] = []
-          for (let i = 0; i < allPromptsQuery.length; i++) {
-            const templateId = parseInt(allPromptsQuery[i].templateId._hex)
-            // const id = Number(allPromptsQuery[i].id._hex)
-            // allTemplatesQueryTemp.push([templateId, id])
+          allTemplatesQuery.forEach((template: any) => {
+            const templateId = parseInt(template.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
             allTemplatesQueryInQuestion.push(templateQuestion)
-          }
-          
-          setAllPrompts(allTemplatesQueryInQuestion)
+          })
 
-          // fix contract bug
-          // const allTemplatesQuery = await LyonTemplateContract.queryAllPromptByAddress(
-          //   address,
-          // )
-          // console.log(allTemplatesQuery)
-          // var allTemplatesQueryTemp: number[] = []
-          // var allTemplatesQueryInQuestion: string[] = []
-          // for (let i = 0; i < allTemplatesQuery.length; i++) {
-          //   const templateId = Number(allTemplatesQuery[i].templateId._hex)
-          //   const id = Number(allTemplatesQuery[i].id._hex)
-          //   // allTemplatesQueryTemp.push([templateId, id])
-          //   allTemplatesQueryTemp.push(templateId)
-          // }
-          // console.log(allTemplatesQueryTemp)
+          setAllTemplates(allTemplatesQueryInQuestion)
 
-          // // TODO debug, the following function does not work
-          // allTemplatesQueryTemp.forEach((templateId) => {
-          //   allTemplatesQueryInQuestion.push(
-          //     templateQuestionMapping![templateId.toString()],
-          //   )
-          // })
-          // setAllTemplates(allTemplatesQueryInQuestion)
+          // Query all replies
+          const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
+            address,
+          )
+          var allRepliesInQuestion: string[] = []
+          allReplies.forEach((reply: any) => {
+            const templateId = parseInt(reply.templateId._hex)
+            const templateQuestion = templateQuestionMapping![templateId]
+            allRepliesInQuestion.push(templateQuestion)
+          })
 
-          //TODO fix contract bug
-          // const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
-          //   address,
-          // )
-          // var allRepliesTemp: number[] = []
-          // var allRepliesInQuestion: string[] = []
-          // for (let i = 0; i < allReplies.length; i++) {
-          //   const templateId = allReplies[i].templateId._hex
-          //   const id = allReplies[i].id._hex
-          //   allRepliesTemp.push(templateId)
-          // }
-          // allRepliesTemp.forEach((templateId) => {
-          //   allRepliesInQuestion.push(
-          //     templateQuestionMapping![templateId.toString()],
-          //   )
-          // })
-          // setAllReplies(allRepliesInQuestion)
+          setAllReplies(allRepliesInQuestion)
         }
       } catch (error: any) {
         toast({

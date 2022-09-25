@@ -151,15 +151,11 @@ const PromptPublicViewPage = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+          '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signer,
         )
-        const LyonTemplateContract = new Contract(
-          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
-          LyonTemplate.abi,
-          signer,
-        )
+        
         const promptSafeMintResponse = await LyonPromptContract.safeMint(
           templateId,
           question,

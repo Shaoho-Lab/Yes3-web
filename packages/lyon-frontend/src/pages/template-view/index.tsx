@@ -118,12 +118,12 @@ const TemplateViewPage = () => {
           return
         }
         const LyonPromptContract = new Contract(
-          '0x36a722Dfb58f90dAB9b4AB1BE2e903afaBA3B008',
+          '0xc6050AF89109746D0F1817A6096dA4e656DF8A7A',
           LyonPrompt.abi,
           signer,
         )
         const LyonTemplateContract = new Contract(
-          '0x22f0260F47f98968A262DcAe17d981e63a6a7455',
+          '0x91D3bC32F60259D254a45eA66dB63EFFaf9882e8',
           LyonTemplate.abi,
           signer,
         )
