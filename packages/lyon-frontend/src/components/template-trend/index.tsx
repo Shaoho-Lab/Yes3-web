@@ -31,7 +31,6 @@ const TemplateTrend = ({
           data.push({ timeInterval: key, numAnswers: trend[key] })
         })
 
-        console.log(data)
         setTrendData(data)
       }
     }
