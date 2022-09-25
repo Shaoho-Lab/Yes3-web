@@ -6,12 +6,12 @@ import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import NFTSBTBox from 'components/NFTSBTBox'
 import LyonPrompt from 'contracts/LyonPrompt.json'
-import { ethers } from 'ethers'
+import { dataURLtoFile } from 'helpers/image'
 import * as htmlToImage from 'html-to-image'
 import { File, NFTStorage } from 'nft.storage'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAccount, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import styles from './index.module.scss'
 
 const PromptRequesterViewPage = () => {
@@ -19,10 +19,8 @@ const PromptRequesterViewPage = () => {
   const [checked, setChecked] = useState<string[]>([])
   const [commentList, setCommentList] = useState<string[]>()
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
-  const [comment, setComment] = useState('')
-  const [uri, setUri] = useState('')
-  const { data: signer, isError, isLoading } = useSigner()
-  const { address, isConnecting, isDisconnected } = useAccount()
+
+  const { data: signer } = useSigner()
   const toast = useToast()
 
   const client = new NFTStorage({
@@ -30,51 +28,26 @@ const PromptRequesterViewPage = () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
   })
 
-  async function upload2IPFS(img: BlobPart) {
+  const upload2IPFS = async (image: File) => {
     const metadata = await client.store({
       name: 'Yes3',
       description:
         'Mint your social interactions on-chain! Powered by Lyon with <3',
-      image: new File([img], 'test.png', { type: 'image/png' }),
+      image,
     })
-    console.log(metadata.url)
-    setUri(metadata.url)
+
+    return metadata.url.toString()
   }
 
-  const HTML2PNG2IPFS = () => {
-    console.log('mint clicked')
-    var node = document.getElementById('NFTSBT')
-    htmlToImage
-      .toPng(node!)
-      .then(function (dataUrl) {
-        // convert to file
-        var img = dataURLtoFile(dataUrl, 'image')
-        upload2IPFS(img)
-      })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error)
-      })
-  }
+  const HTML2PNG2IPFS = async () => {
+    const node = document.getElementById('NFTSBT')
+    const dataUrl = await htmlToImage.toJpeg(node!)
+    const img = dataURLtoFile(dataUrl, 'image/jpeg')
 
-  const dataURLtoFile = (dataUrl: string, filename: string) => {
-    const arr = dataUrl.split(',')
-    const mime = arr[0].match(/:(.*?);/)?.[1]
-    const bstr = window.atob(arr[1])
-
-    let n = bstr.length
-    let u8arr = new Uint8Array(n)
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n)
-    }
-
-    return new File([u8arr], filename, { type: mime })
+    return upload2IPFS(img)
   }
 
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc-mumbai.maticvigil.com/v1/59e3a028aa7f390b9b604fae35aab48985ebb2f0',
-  )
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     var updatedList: string[] = [...checked]
@@ -85,12 +58,13 @@ const PromptRequesterViewPage = () => {
     }
     setChecked(updatedList)
   }
+
   const isChecked = (item: string) =>
     checked.includes(item) ? 'checked-item' : 'not-checked-item'
 
   const handleMintPrompt = async () => {
     try {
-      HTML2PNG2IPFS()
+      const uri = await HTML2PNG2IPFS()
 
       if (signer) {
         const LyonPromptContract = new Contract(
@@ -164,6 +138,7 @@ const PromptRequesterViewPage = () => {
       const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
       const promptSnapshot = await getDoc(promptMetadataRef)
       const promptData = promptSnapshot.data()
+
       if (promptData !== undefined) {
         const replies = promptData[id!].replies
         if (replies !== undefined) {
@@ -180,7 +155,7 @@ const PromptRequesterViewPage = () => {
     }
 
     loadTemplateData()
-  }, [])
+  }, [id, templateId])
 
   return (
     <CommonLayout className={styles.page}>

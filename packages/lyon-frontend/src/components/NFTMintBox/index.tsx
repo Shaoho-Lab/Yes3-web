@@ -9,7 +9,7 @@ export interface NFTMintBoxProps
 const NFTMintBox = ({ className, question, ...props }: NFTMintBoxProps) => {
   return (
     <div
-      id="NFTSBTMint"
+      id="NFTMint"
       className={classNames(styles.NFTMintBox, className)}
       {...props}
     >

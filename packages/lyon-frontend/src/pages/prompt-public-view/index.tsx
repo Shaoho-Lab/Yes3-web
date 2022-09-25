@@ -30,6 +30,7 @@ import { useAccount, useSigner } from 'wagmi'
 import * as htmlToImage from 'html-to-image'
 import { File, NFTStorage } from 'nft.storage'
 import styles from './index.module.scss'
+import { dataURLtoFile } from 'helpers/image'
 
 const PromptPublicViewPage = () => {
   const toast = useToast()
@@ -45,8 +46,6 @@ const PromptPublicViewPage = () => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [commentList, setCommentList] = useState<string[][]>()
   const [chosenRepliesList, setChosenRepliesList] = useState<string[]>()
-
-  const [uri, setUri] = useState('')
 
   const { templateId, id } = useParams<{ templateId: string; id: string }>()
   const { data: signer } = useSigner()
@@ -64,8 +63,10 @@ const PromptPublicViewPage = () => {
         'template-metadata',
         templateId!,
       )
+
       const templateSnapshot = await getDoc(templateMetadataRef)
       const fetchedData = templateSnapshot.data()
+
       if (fetchedData !== undefined) {
         setQuestion(fetchedData.question)
         setQuestionContext(fetchedData.context)
@@ -79,6 +80,7 @@ const PromptPublicViewPage = () => {
       const promptMetadataRef = doc(firestore, 'prompt-metadata', templateId!)
       const promptSnapshot = await getDoc(promptMetadataRef)
       const promptData = promptSnapshot.data()
+
       if (promptData !== undefined) {
         const promptOwnerAddress = promptData[id!].promptOwner
         const promptOwnerName = getName(
@@ -136,51 +138,30 @@ const PromptPublicViewPage = () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEI5QTUwQjZGN0Y0YTkwODExNDQzNDU1ZTBGODQ1OTk0QTc4OTQ4MjciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2MzgxMzI2MjY4OCwibmFtZSI6IlllczMifQ.CFX9BRbLs1ohAslhXC3T-4CWyPZexG1CLWjicH7akRU',
   })
 
-  async function upload2IPFS(img: BlobPart) {
+  const upload2IPFS = async (image: File) => {
     const metadata = await client.store({
       name: 'Yes3',
       description:
         'Mint your social interactions on-chain! Powered by Lyon with <3',
-      image: new File([img], 'test.png', { type: 'image/png' }),
+      image,
     })
-    console.log(metadata.url)
-    setUri(metadata.url)
+
+    return metadata.url.toString()
   }
 
-  const HTML2PNG2IPFS = () => {
-    console.log('mint clicked')
-    var node = document.getElementById('NFTSBT')
-    htmlToImage
-      .toPng(node!)
-      .then(function (dataUrl) {
-        // convert to file
-        var img = dataURLtoFile(dataUrl, 'image')
-        upload2IPFS(img)
-      })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error)
-      })
-  }
+  const HTML2PNG2IPFS = async () => {
+    const node = document.getElementById('NFTSBT')
+    const dataUrl = await htmlToImage.toJpeg(node!)
+    const img = dataURLtoFile(dataUrl, 'image/jpeg')
 
-  const dataURLtoFile = (dataUrl: string, filename: string) => {
-    const arr = dataUrl.split(',')
-    const mime = arr[0].match(/:(.*?);/)?.[1]
-    const bstr = window.atob(arr[1])
-
-    let n = bstr.length
-    let u8arr = new Uint8Array(n)
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n)
-    }
-
-    return new File([u8arr], filename, { type: mime })
+    return upload2IPFS(img)
   }
 
   const handleMintPrompt = async () => {
-    HTML2PNG2IPFS()
     try {
       if (signer) {
+        const uri = await HTML2PNG2IPFS()
+
         const LyonPromptContract = new Contract(
           '0xBE7F59766e1ff6959ADE04163a2682D49fA3b57e',
           LyonPrompt.abi,
