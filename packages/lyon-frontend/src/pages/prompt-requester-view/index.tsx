@@ -182,7 +182,7 @@ const PromptRequesterViewPage = () => {
       <div className={styles.container}>
         <div className={styles.container}>
           <div className={styles.image}>
-            <NFTSBTBox question={question} replyShow={['asdasd']} />
+            <NFTSBTBox question={question} replyShow={checked} />
           </div>
           <div className={styles.comments}>
             <div className={styles.title}>
