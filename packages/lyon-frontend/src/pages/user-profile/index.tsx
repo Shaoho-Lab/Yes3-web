@@ -81,7 +81,6 @@ const UserProfilePage = () => {
             await LyonPromptContract.queryAllPromptByAddress(address)
 
           const allPromptQueryInQuestion: string[] = []
-
           allPromptsQuery.forEach((prompt: any) => {
             const templateId = parseInt(prompt.templateId._hex)
             const templateQuestion = templateQuestionMapping![templateId]
@@ -98,9 +97,8 @@ const UserProfilePage = () => {
           const allTemplatesQueryInQuestion: string[] = []
 
           allTemplatesQuery.forEach((template: any) => {
-            const templateId = parseInt(template.templateId._hex)
+            const templateId = parseInt(template._hex)
             const templateQuestion = templateQuestionMapping![templateId]
-
             allTemplatesQueryInQuestion.push(templateQuestion)
           })
 
@@ -122,8 +120,6 @@ const UserProfilePage = () => {
           setAllReplies(allRepliesInQuestion)
         }
       } catch (error: any) {
-        console.log(error)
-
         toast({
           title: 'Error',
           description: error.message,
