@@ -290,7 +290,6 @@ const PromptPublicViewPage = () => {
           </div>
         </div>
         <div className={styles.charts}>
-          <div className={styles.chart}></div>
           <TemplateTree className={styles.graph} templateId={templateId!} />
         </div>
         <div className={styles.buttons}>

@@ -85,17 +85,7 @@
   .charts {
     margin-bottom: 40px;
 
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    .chart {
-      margin-right: 20px;
-    }
-
-    .chart,
     .graph {
-      flex: 1;
       height: 300px;
 
       background-color: #eeeeee;
