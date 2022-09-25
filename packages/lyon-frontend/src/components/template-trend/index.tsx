@@ -47,7 +47,7 @@ const TemplateTrend = ({
         margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
       >
         <XAxis dataKey="timeInterval" />
-        <YAxis />
+        <YAxis allowDecimals={false}/>
         <Tooltip />
         <CartesianGrid stroke="#f5f5f5" />
         <Line
