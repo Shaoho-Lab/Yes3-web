@@ -17,7 +17,7 @@ import styles from './index.module.scss'
 const PromptRequesterViewPage = () => {
   const [question, setQuestion] = useState('')
   const [checked, setChecked] = useState<string[]>([])
-  const [commentList, setCommentList] = useState<string[][]>()
+  const [commentList, setCommentList] = useState<string[]>()
   const [userAddressNameMapping, setUserAddressNameMapping] = useState<any>()
   const [comment, setComment] = useState('')
   const [uri, setUri] = useState('')
@@ -109,8 +109,16 @@ const PromptRequesterViewPage = () => {
         const promptSnapshot = await getDoc(promptMetadataRef)
 
         if (promptSnapshot.exists()) {
+          var checnRepliesData:any = {}
+          checked.forEach(item => {
+            const key = item.split(':')[0]
+            const value = item.split(':').slice(1).join(':')
+            const name = userAddressNameMapping[key]
+
+            checnRepliesData[name] = value
+          })
           const promptData = {
-            chosenReplies: {}, // TODO add checked Data
+            chosenReplies: checnRepliesData, // TODO add checked Data
             ...promptSnapshot.data()[id!],
           }
           updateDoc(promptMetadataRef, {
@@ -159,11 +167,11 @@ const PromptRequesterViewPage = () => {
       if (promptData !== undefined) {
         const replies = promptData[id!].replies
         if (replies !== undefined) {
-          const commentListTemp: string[][] = []
+          const commentListTemp: string[] = []
           for (let key of Object.keys(replies)) {
             const name = getName(userAddressNameMapping, key)
             const value = replies[key]
-            commentListTemp.push([name, value.comment])
+            commentListTemp.push(name + ': ' + value.comment)
           }
 
           setCommentList(commentListTemp)
