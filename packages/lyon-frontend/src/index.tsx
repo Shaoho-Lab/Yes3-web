@@ -27,7 +27,7 @@ const router = createBrowserRouter([
   { path: '/templates/create', element: <TemplateCreatePage /> },
   { path: '/prompts/:templateId/:id', element: <PromptPublicViewPage /> },
   {
-    path: '/prompts/:templateId/:id/:sender',
+    path: '/prompts/:templateId/:id/sender',
     element: <PromptRequesterViewPage />,
   },
   {
