@@ -185,7 +185,7 @@ const TemplateViewPage = () => {
     }
   }
 
-  return question !== '' && questionContext !== '' ? (
+  return question !== '' ? (
     <CommonLayout className={styles.page}>
       <div className={styles.content}>
         <div className={styles.heading}>{question}</div>
