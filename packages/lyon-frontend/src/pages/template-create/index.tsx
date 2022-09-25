@@ -60,7 +60,7 @@ const TemplateCreatePage = () => {
   const HTML2PNG2IPFS = async () => {
     const node = document.getElementById('NFTMint')
     const dataUrl = await htmlToImage.toJpeg(node!)
-    const img = dataURLtoFile(dataUrl, 'image/jpeg')
+    const img = dataURLtoFile(dataUrl, 'image.jpg')
 
     return upload2IPFS(img)
   }
