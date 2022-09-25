@@ -98,13 +98,13 @@ const TemplateViewPage = () => {
 
       if (signer) {
         const LyonPromptContract = new Contract(
-          '0x0f18dd7a6c9048c1CBE29401E62eaBcCF749FEE1',
+          LyonPrompt.contract,
           LyonPrompt.abi,
           signer,
         )
 
         const LyonTemplateContract = new Contract(
-          '0x115ca26551A4f2B9243BBf9bF117157B39140040',
+          LyonTemplate.contract,
           LyonTemplate.abi,
           signer,
         )

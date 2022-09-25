@@ -2,6 +2,7 @@
   "_format": "hh-sol-artifact-1",
   "contractName": "LyonTemplate",
   "sourceName": "contracts/LyonTemplate.sol",
+  "contract": "0x115ca26551A4f2B9243BBf9bF117157B39140040",
   "abi": [
     {
       "inputs": [],

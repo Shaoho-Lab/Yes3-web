@@ -60,7 +60,7 @@ const PromptRequesterViewPage = () => {
 
       if (signer) {
         const LyonPromptContract = new Contract(
-          '0x0f18dd7a6c9048c1CBE29401E62eaBcCF749FEE1',
+          LyonPrompt.contract,
           LyonPrompt.abi,
           signer,
         )
