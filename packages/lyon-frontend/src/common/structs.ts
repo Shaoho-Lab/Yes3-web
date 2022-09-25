@@ -4,3 +4,9 @@ export interface TemplateStruct {
   ownerAddress: string
   numAnswers: number
 }
+
+export interface PromptStruct {
+  templateId: number
+  promptId: number
+  question: string
+}

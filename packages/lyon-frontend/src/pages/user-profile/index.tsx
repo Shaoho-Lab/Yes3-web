@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react'
 import { Contract } from '@ethersproject/contracts'
 import { doc, firestore, getDoc } from 'common/firebase'
-import Button from 'components/button'
+import { PromptStruct, TemplateStruct } from 'common/structs'
 import Card from 'components/card'
 import CommonLayout from 'components/common-layout'
 import LyonPrompt from 'contracts/LyonPrompt.json'
@@ -23,11 +23,12 @@ const signerAdmin = new ethers.Wallet(adminPrivateKey, provider)
 
 const UserProfilePage = () => {
   const [ENSName, setENSName] = useState('')
-  const [allPrompts, setAllPrompts] = useState<string[]>()
-  const [allTemplates, setAllTemplates] = useState<string[]>()
-  const [allReplies, setAllReplies] = useState<string[]>()
+  const [allPrompts, setAllPrompts] = useState<PromptStruct[]>()
+  const [allTemplates, setAllTemplates] = useState<TemplateStruct[]>()
+  const [allReplies, setAllReplies] = useState<PromptStruct[]>()
 
   const { address } = useAccount()
+
   const toast = useToast()
   const navigate = useNavigate()
 
@@ -82,44 +83,43 @@ const UserProfilePage = () => {
           const allPromptsQuery =
             await LyonPromptContract.queryAllPromptByAddress(address)
 
-          const allPromptQueryInQuestion: string[] = []
-          allPromptsQuery.forEach((prompt: any) => {
-            const templateId = parseInt(prompt.templateId._hex)
-            const templateQuestion = templateQuestionMapping![templateId]
+          setAllPrompts(
+            allPromptsQuery.map((prompt: any) => {
+              const templateId = parseInt(prompt.templateId._hex)
+              const promptId = parseInt(prompt.id._hex)
+              const question = templateQuestionMapping![templateId]
 
-            allPromptQueryInQuestion.push(templateQuestion)
-          })
-
-          setAllPrompts(allPromptQueryInQuestion)
+              return { templateId, promptId, question }
+            }),
+          )
 
           // Query all templates
           const allTemplatesQuery =
             await LyonTemplateContract.queryAllTemplatesByAddress(address)
 
-          const allTemplatesQueryInQuestion: string[] = []
+          setAllTemplates(
+            allTemplatesQuery.map((template: any) => {
+              const templateId = parseInt(template._hex)
+              const question = templateQuestionMapping![templateId]
 
-          allTemplatesQuery.forEach((template: any) => {
-            const templateId = parseInt(template._hex)
-            const templateQuestion = templateQuestionMapping![templateId]
-            allTemplatesQueryInQuestion.push(templateQuestion)
-          })
-
-          setAllTemplates(allTemplatesQueryInQuestion)
+              return { templateId, question }
+            }),
+          )
 
           // Query all replies
           const allReplies = await LyonPromptContract.queryAllRepliesByAddress(
             address,
           )
 
-          const allRepliesInQuestion: string[] = []
+          setAllReplies(
+            allReplies.map((reply: any) => {
+              const templateId = parseInt(reply.templateId._hex)
+              const promptId = parseInt(reply.id._hex)
+              const question = templateQuestionMapping![templateId]
 
-          allReplies.forEach((reply: any) => {
-            const templateId = parseInt(reply.templateId._hex)
-            const templateQuestion = templateQuestionMapping![templateId]
-            allRepliesInQuestion.push(templateQuestion)
-          })
-
-          setAllReplies(allRepliesInQuestion)
+              return { templateId, promptId, question }
+            }),
+          )
         }
       } catch (error: any) {
         toast({
@@ -160,9 +160,13 @@ const UserProfilePage = () => {
           <div key={index}>
             <Card
               className={styles.comment}
-              onClick={e => navigate(`prompts/$`)}
+              onClick={() =>
+                navigate(
+                  `/prompts/${item.templateId}/${item.promptId}/${address}`,
+                )
+              }
             >
-              <span>{item}</span>
+              <span>{item.question}</span>
             </Card>
           </div>
         ))}
@@ -171,8 +175,11 @@ const UserProfilePage = () => {
       <div className="list-container">
         {allTemplates?.map((item, index) => (
           <div key={index}>
-            <Card className={styles.comment}>
-              <span>{item}</span>
+            <Card
+              className={styles.comment}
+              onClick={() => navigate(`/templates/${item.templateId}`)}
+            >
+              <span>{item.question}</span>
             </Card>
           </div>
         ))}
@@ -181,8 +188,13 @@ const UserProfilePage = () => {
       <div className="list-container">
         {allReplies?.map((item, index) => (
           <div key={index}>
-            <Card className={styles.comment}>
-              <span>{item}</span>
+            <Card
+              className={styles.comment}
+              onClick={() =>
+                navigate(`/prompts/${item.templateId}/${item.promptId}`)
+              }
+            >
+              <span>{item.question}</span>
             </Card>
           </div>
         ))}
