@@ -218,6 +218,8 @@ const TemplateViewPage = () => {
           <div className={styles.stats}>
             <TemplateTrend templateId={templateId!} />
           </div>
+        </div>
+        <div className={styles.charts}>
           <div className={styles.graph}>
             <TemplateTree templateId={templateId!} />
           </div>

@@ -42,7 +42,7 @@ const TemplateTrend = ({
   return trendData.length > 0 ? (
     <div className={classNames(styles.templateTrend, className)} {...props}>
       <LineChart
-        width={500}
+        width={1000}
         height={300}
         data={trendData}
         margin={{ top: 5, right: 20, left: 10, bottom: 5 }}

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './index.module.scss'
 import SBT from './sbt.png'
 import NFT from './nft.png'
+import TemplateTree from 'components/template-tree'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -83,7 +84,9 @@ const LandingPage = () => {
       </div>
       <div className={styles.credit}>
         <div className={styles.heading}>Let the credit flow~</div>
-        <div className={styles.graph}></div>
+        <div className={styles.graph}>
+          <TemplateTree templateId="1" />
+        </div>
       </div>
     </CommonLayout>
   )
