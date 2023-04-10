@@ -119,10 +119,10 @@ const TemplateViewPage = () => {
 
         console.log('promptSafeMintResponse', promptSafeMintResponse)
 
-        const templateNewPrompMinted =
-          await LyonTemplateContract.newPrompMinted(templateId)
+        // const templateNewPrompMinted =
+        //   await LyonTemplateContract.newPrompMinted(templateId)
 
-        console.log('templateNewPrompMinted', templateNewPrompMinted)
+        // console.log('templateNewPrompMinted', templateNewPrompMinted)
 
         const questionNumAnswersAdded = questionNumAnswers + 1
 

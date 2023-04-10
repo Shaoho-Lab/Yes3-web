@@ -44,7 +44,7 @@ const TemplateListPage = () => {
         <div className={styles.searchRow}>
           <SearchBar
             className={styles.searchBar}
-            placeholder="Search question templates or create new one"
+            placeholder="Search question templates"
           />
           <Button
             className={styles.createButton}
